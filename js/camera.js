@@ -274,6 +274,9 @@ async function onSustainedPresence({ confidence, areaRatio, dwellMs, zone, stati
       if (!stream || token !== startToken) return;
       console.error("No se pudo estimar el rango de edad:", error);
       status("No se pudo estimar la edad; continúan las recomendaciones generales.", true);
+      window.dispatchEvent(new CustomEvent("beautytech:age-estimated", {
+        detail: { stationId: station.id, ageGroup: "all", source: "camera", reason: "estimation-error", sampleCount: 0 }
+      }));
     });
   }
 }

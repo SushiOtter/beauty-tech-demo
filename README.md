@@ -1,6 +1,6 @@
 # Beauty Tech Retail Experience
 
-**Versión 32.** Demostración local con cinco estaciones, un sensor, franjas de edad orientativas y procesamiento de cámara en el navegador.
+**Versión 33.** Experiencia de tablet por sección, con vídeo local, consentimiento y recomendaciones orientativas procesadas en el navegador.
 
 ## Inicio rápido en Windows
 
@@ -12,21 +12,22 @@ No requiere Node, paquetes Python, claves ni conexión a internet para la detecc
 
 ## Recorrido
 
-1. Pulsa **Descubre tu selección** y lee el aviso de privacidad.
-2. **Activar cámara** solicita permiso y abre un escaneo de hasta 20 segundos; **Prefiero no usar la cámara** continúa sin estimar edad.
-3. Con una persona visible, el modelo local toma diez lecturas y usa la mediana. Solo muestra una franja amplia, nunca una edad exacta. Varias personas, una estimación inferior a 18, falta de lecturas o tiempo agotado llevan a **Todas las edades**.
-4. El resultado muestra las cinco estaciones y el sensor en una cuadrícula 3×2. La cámara se detiene al terminar el escaneo; la franja se puede corregir desde el panel o los controles de demostración del sensor.
-5. **Explorar** amplía una estación. Tras dos minutos sin interacción, la experiencia vuelve al inicio. Cancelar detiene la cámara.
+1. En la pantalla de trabajador, elige la sección asignada a la tablet y pulsa **Comenzar**.
+2. Se reproduce en bucle el vídeo local de esa sección. La cámara permanece apagada hasta que el cliente lee el aviso y pulsa **Aceptar y comenzar**; también puede continuar sin cámara.
+3. Con el consentimiento, la cámara detecta localmente la presencia de un rostro. Tras una presencia sostenida, estima una franja aproximada con diez lecturas y mediana; solo considera personas adultas y no calcula ni guarda una edad exacta.
+4. Aparecen recomendaciones de la sección elegida, adaptadas a la franja estimada. Si no se puede estimar o se rechaza la cámara, se muestra contenido general de esa misma sección. No se muestran las otras secciones.
+5. Cuando la persona se aleja, se apaga la cámara, se oculta la recomendación y vuelve el aviso de consentimiento para el siguiente cliente. También hay un botón para terminar manualmente.
 
 ## Funcionalidad
 
 - Cinco estaciones configurables y contenido local de muestra.
 - Modos trabajador, administración y presentación a pantalla completa.
-- Consentimiento explícito antes de solicitar el acceso a la cámara.
+- El trabajador asigna una sección a la tablet; el vídeo de esa sección ocupa la pantalla y se reproduce en bucle.
+- Consentimiento explícito de cada cliente antes de solicitar acceso a la cámara.
 - Detección facial y estimación local con diez lecturas y mediana; backends WebGL y CPU como respaldo.
 - Cuatro franjas adultas (18–29, 30–44, 45–59 y 60+) más contenido general para todas las edades. La edad aparente no verifica la edad real.
-- Contenido editable por estación y franja en `data/contenido.json`; cada tarjeta usa el póster correcto y el reproductor amplía el vídeo local de esa misma franja.
-- Recomendaciones de ejemplo generales por rango; no son diagnóstico ni valoración de la piel.
+- Contenido editable por sección y franja en `data/contenido.json`; tras el escaneo solo se muestran recomendaciones de la sección seleccionada.
+- Las recomendaciones son categorías editoriales de ejemplo (etiquetas de `ageContent`), no un catálogo real de SKU, marcas, precios o disponibilidad.
 - **Vídeos locales:** se incluyen 25 clips originales H.264 (uno por cada estación y franja), con 25 pósteres ilustrados sin texto duplicado. Las piezas ilustran la categoría y reproducen el titular, los tags y la descripción editorial de la combinación exacta; no muestran modelos reales ni fingen que la cámara lee la piel, el pelo o la identidad. El inventario y licencia figuran en `CREDITS.md`.
 - Modos de simulación manual/guiada sin cámara, claramente identificados como simulación.
 - Cinco zonas de cámara configurables, ajuste de confianza y diseño responsive.
@@ -36,7 +37,7 @@ No requiere Node, paquetes Python, claves ni conexión a internet para la detecc
 - No se activa la cámara antes de aceptar el aviso. También se puede continuar sin conceder permiso.
 - Fotogramas y rango estimado se procesan en memoria local; no se guardan ni se envían a terceros ni a un servidor.
 - La edad estimada puede ser inexacta y **no verifica la edad**. La edad no determina las necesidades de la piel. No se presenta ni se usa la salida de género del modelo.
-- La detección requiere ver un rostro; no estima edad si solo ve un cuerpo. No reconoce identidad, mirada, barba o características del cabello.
+- La detección requiere ver un rostro; no estima edad si solo ve un cuerpo. Tras mostrar las recomendaciones, la cámara sigue activa únicamente para detectar que esa persona se ha alejado; entonces se apaga y solicita nuevo consentimiento antes del siguiente escaneo. No reconoce identidad, mirada, barba o características del cabello.
 - Los vídeos originales son ilustraciones de demostración, no imágenes de productos reales ni una evaluación cosmética. Sus licencias y atribución están documentadas en `CREDITS.md`.
 - Inter y Cormorant Garamond se sirven desde WOFF2 locales en `assets/fonts/`; sus licencias OFL también están incluidas. Los iconos son SVG incluidos en `assets/icons/`.
 - En Administración se puede introducir voluntariamente una URL externa de vídeo. Ese uso opcional contacta al host elegido y necesita internet; no es necesario para la demo y nunca recibe imágenes de cámara.
@@ -69,9 +70,9 @@ La licencia MIT del paquete está en `vendor/face-api/LICENSE`; la licencia Apac
 - Si no carga el modelo local, comprueba que `vendor/face-api/` y `models/face-api/` estén incluidos en la carpeta.
 - Los modelos y vídeos incluidos no usan CDN. Solo un enlace externo añadido manualmente puede generar solicitudes de red.
 - **Pruebas anteriores (flujo anterior):** en Windows con Chromium integrado de Electron (Chrome 150) se verificaron la carga local del detector, la cámara simulada, AV1, el permiso denegado y la simulación guiada. También se validaron respuestas HTTP 206/416 y una inferencia de 27 ms tras cargar el modelo. El reproductor WebM/VP8 no se pudo certificar en ese Chromium.
-- **Interfaz actual, versión 31:** se comprobó el recorrido sin cámara, el permiso denegado y la transición desde ambos estados al resultado; consentimiento y aviso de error quedan ocultos. Se revisó la cuadrícula en 1280×800 y 390×844: sin desbordamiento horizontal y con los botones dentro de sus tarjetas. También se probaron las cinco franjas, **Explorar**, el cierre del reproductor y el retorno al inicio.
+- **Interfaz, versión 33:** la pantalla de preparación muestra una selección explícita de sección y un botón **Comenzar**. El modo de tablet oculta las otras secciones, reproduce el vídeo seleccionado a pantalla completa y solicita consentimiento en el propio dispositivo antes de activar la cámara.
 - **Estimador de edad:** con la inferencia facial simulada dentro del módulo local, se obtuvieron diez lecturas de 35 años, progreso 1–10 y la franja 30–44. Esto verifica el muestreo y su integración con las recomendaciones, pero no valida el detector real ni la captura de cámara.
 - **Medios locales:** se comprobaron los 25 MP4 y los 25 pósteres; cada combinación apunta a un archivo exclusivo. Los clips se decodifican como H.264 local, y al cambiar la franja cambian tanto el contenido recomendado como el medio mostrado. No hay solicitudes de medios a terceros.
-- **Permiso de cámara:** al denegarlo, el aviso ofrece continuar sin cámara; esa opción muestra recomendaciones generales, declara que no estimó la edad y confirma que la cámara está apagada. En esta prueba no se enviaron solicitudes a orígenes externos y no hubo errores ni avisos de consola.
+- **Flujo por verificar:** se debe volver a probar con cámara simulada y en navegador limpio que el vídeo cambia con la sección, que solo aparece una sección, que la recomendación usa los tags de esa sección y franja, y que al alejarse se oculta y se vuelve a pedir consentimiento.
 - **Pruebas automatizadas actuales:** `node --test tests\\age-content.test.js` (3 pruebas aprobadas).
 - **Pendiente:** probar la cámara física, tablet Android real y Chrome/Edge nativos en el dispositivo de tienda. Los vídeos H.264 locales se decodifican en el navegador de prueba, pero no se certifica hardware/tablet no disponibles.

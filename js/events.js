@@ -1,7 +1,7 @@
 import { appState, stationStates } from "./state.js";
 import { announce } from "./utils.js";
-import { renderDevices } from "./panels.js?v=32";
-import { ageProfiles } from "./products.js?v=32";
+import { renderDevices } from "./panels.js?v=33";
+import { ageProfiles } from "./products.js?v=33";
 
 const timers = new Map();
 const attentionTimers = new Map();
@@ -196,11 +196,17 @@ function finishStation(id, reason = "complete") {
   station.mediaSlot = null;
   station.loopWhilePresent = false;
   station.state = station.enabled ? stationStates.COOLDOWN : stationStates.DISABLED;
+  const customerLeft = reason === "lost" && appState.presentationMode && id === appState.presentationStationId;
+  if (customerLeft) {
+    appState.ageGroup = "all";
+    appState.ageGroupSource = "default";
+  }
   if (reason === "lost" && appState.mode === "public") {
     const modeLabel = document.querySelector("#public-mode-label");
     if (modeLabel) modeLabel.textContent = "ESPERA DE PRESENCIA";
   }
   renderDevices();
+  if (customerLeft) window.dispatchEvent(new CustomEvent("beautytech:customer-left"));
   timers.set(id, setTimeout(() => {
     station.state = station.enabled ? stationStates.IDLE : stationStates.DISABLED;
     renderDevices();

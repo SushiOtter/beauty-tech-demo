@@ -563,6 +563,241 @@ body.presentation-mode .public-grid .device-video {
   object-fit: cover;
 }
 
+body.presentation-mode #public-view {
+  position: fixed;
+  inset: 0;
+  display: block;
+  width: 100vw;
+  height: 100vh;
+  min-height: 0;
+  padding: 0;
+  overflow: hidden;
+  background: #171411;
+}
+
+body.presentation-mode .public-header,
+body.presentation-mode .public-bottom,
+body.presentation-mode #guided-complete {
+  display: none !important;
+}
+
+body.presentation-mode .public-grid {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+
+body.presentation-mode .public-grid .device,
+body.presentation-mode .public-grid .device[data-station-id] {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+body.presentation-mode .public-grid .device::after,
+body.presentation-mode .public-grid .device-screen::before,
+body.presentation-mode .public-grid .device-top,
+body.presentation-mode .public-grid .device-content,
+body.presentation-mode .public-grid .device-bottom,
+body.presentation-mode .public-grid .device-poster {
+  display: none !important;
+}
+
+body.presentation-mode .public-grid .device-screen,
+body.presentation-mode .public-grid .device-screen:not(.has-video),
+body.presentation-mode .public-grid .device-screen.has-video {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  border-radius: 0;
+  background: #171411 !important;
+}
+
+body.presentation-mode .public-grid .device-video {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+body.presentation-mode .public-status {
+  position: fixed;
+  z-index: 22;
+  top: 16px;
+  right: 18px;
+  padding: 9px 13px;
+  border: 1px solid rgba(255, 255, 255, .24);
+  border-radius: 999px;
+  background: rgba(25, 22, 19, .62);
+  color: var(--ivory);
+  backdrop-filter: blur(12px);
+}
+
+body.presentation-mode .presentation-status {
+  position: fixed;
+  z-index: 22;
+  inset: auto auto 18px 18px;
+  display: block;
+  max-width: min(460px, calc(100vw - 36px));
+  margin: 0;
+  padding: 9px 13px;
+  border: 1px solid rgba(255, 255, 255, .2);
+  border-radius: 999px;
+  background: rgba(25, 22, 19, .64);
+  color: var(--ivory);
+  font-size: 11px;
+  backdrop-filter: blur(12px);
+}
+
+body.presentation-mode #age-recommendation-panel:not([hidden]) {
+  position: fixed;
+  z-index: 24;
+  inset: auto 50% 50px auto;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+  width: min(900px, calc(100vw - 40px));
+  max-height: min(52vh, 430px);
+  overflow: auto;
+  margin: 0;
+  padding: clamp(16px, 2.4vw, 26px);
+  transform: translateX(50%);
+  border: 1px solid rgba(255, 255, 255, .3);
+  border-radius: 20px;
+  background: rgba(250, 246, 239, .96);
+  color: var(--ink);
+  box-shadow: 0 16px 54px rgba(0, 0, 0, .28);
+}
+
+body.presentation-mode #age-recommendation-panel h2 {
+  margin: 0 0 6px;
+  font-size: clamp(22px, 3vw, 34px);
+}
+
+body.presentation-mode #age-recommendation-panel p:not(.eyebrow) {
+  margin: 0;
+  font-size: clamp(12px, 1.4vw, 16px);
+}
+
+body.presentation-mode #age-recommendation-panel ul {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin: 10px 0 4px;
+  padding: 0;
+  list-style: none;
+}
+
+body.presentation-mode #age-recommendation-panel li {
+  padding: 12px 14px;
+  border: 1px solid rgba(140, 123, 107, .25);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, .66);
+  font-size: clamp(12px, 1.35vw, 15px);
+}
+
+body.presentation-mode #age-recommendation-panel small {
+  font-size: 10px;
+}
+
+body.presentation-mode .age-range-control {
+  display: none;
+}
+
+body.presentation-mode #kiosk-next-customer:not([hidden]) {
+  justify-self: start;
+  min-height: 46px;
+  margin-top: 6px;
+}
+
+body.presentation-mode #camera-consent-view:not([hidden]) {
+  position: fixed;
+  z-index: 80;
+  inset: 0;
+  display: grid;
+  width: auto;
+  max-width: none;
+  min-height: 0;
+  max-height: 100vh;
+  align-content: center;
+  justify-items: center;
+  gap: 12px;
+  overflow-y: auto;
+  margin: 0;
+  padding: clamp(18px, 5vh, 48px) 20px;
+  background: rgba(22, 19, 17, .78);
+  color: var(--ivory);
+  backdrop-filter: blur(5px);
+}
+
+body.presentation-mode #camera-consent-view .eyebrow {
+  margin: 0;
+  color: var(--nude);
+}
+
+body.presentation-mode #camera-consent-view h1 {
+  margin: 0;
+  color: var(--ivory);
+  font-size: clamp(34px, 6vw, 58px);
+}
+
+body.presentation-mode #camera-consent-view .worker-copy {
+  max-width: 620px;
+  margin: 0;
+  color: rgba(250, 246, 239, .88);
+}
+
+body.presentation-mode #camera-consent-view .privacy-card {
+  width: min(620px, 100%);
+  margin: 0;
+  border-color: rgba(255, 255, 255, .22);
+  background: rgba(250, 246, 239, .94);
+  text-align: left;
+}
+
+body.presentation-mode #camera-consent-view .worker-note {
+  max-width: 620px;
+  margin: 0;
+  color: rgba(250, 246, 239, .76);
+}
+
+body.presentation-mode #camera-consent-view .worker-flow-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  width: min(620px, 100%);
+}
+
+body.presentation-mode #camera-consent-view .worker-flow-actions .button {
+  min-height: 48px;
+}
+
+body.presentation-mode #presentation-exit {
+  display: none !important;
+}
+
 body.presentation-mode .public-grid .sensor-screen {
   background: #e9e1d5;
 }
@@ -597,14 +832,14 @@ body.presentation-mode .presentation-exit {
 
 @media (max-width: 760px) {
   body.presentation-mode {
-    overflow-y: auto;
+    overflow: hidden;
   }
 
   body.presentation-mode #public-view {
-    position: relative;
-    min-height: 100vh;
-    overflow: visible;
-    padding: 14px;
+    position: fixed;
+    min-height: 0;
+    overflow: hidden;
+    padding: 0;
   }
 
   body.presentation-mode .public-header {
@@ -616,54 +851,30 @@ body.presentation-mode .presentation-exit {
   }
 
   body.presentation-mode #age-recommendation-panel:not([hidden]) {
-    grid-template-columns: minmax(0, 1fr) minmax(120px, .45fr);
-    max-height: none;
-    padding: 12px;
+    grid-template-columns: minmax(0, 1fr);
+    max-height: min(58vh, 480px);
+    padding: 16px;
   }
 
-  body.presentation-mode .public-grid {
-    flex: none;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-template-rows: auto;
-    grid-auto-rows: minmax(190px, auto);
-    gap: 10px;
+  body.presentation-mode #age-recommendation-panel ul {
+    grid-template-columns: 1fr;
+    gap: 6px;
+    margin: 6px 0 2px;
   }
 
-  body.presentation-mode .public-grid .device,
-  body.presentation-mode .public-grid .device[data-station-id] {
-    min-height: 190px;
+  body.presentation-mode #age-recommendation-panel li {
+    padding: 9px 11px;
   }
 
-  body.presentation-mode .public-grid .device-screen {
-    min-height: 176px;
+  body.presentation-mode .public-status {
+    top: 10px;
+    right: 10px;
   }
 
-  body.presentation-mode .public-grid .device-screen.has-poster:not(.has-video) > .device-content {
-    width: 92%;
-  }
-
-  body.presentation-mode .public-grid .device-screen:not(.has-video) .device-poster {
-    width: 34%;
-    opacity: .24;
-  }
-
-  body.presentation-mode .public-grid .sensor-device {
-    grid-column: 1 / -1;
-    min-height: 205px;
-  }
-
-  body.presentation-mode .public-grid .sensor-screen {
-    min-height: 190px;
-  }
-
-  body.presentation-mode .station-open-button {
-    min-width: 72px;
-    padding-inline: 8px;
-    font-size: 9px;
-  }
-
-  body.presentation-mode .sensor-age-controls {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+  body.presentation-mode .presentation-status {
+    inset: auto 10px 10px;
+    max-width: none;
+    text-align: center;
   }
 
   @media (max-width: 620px) {

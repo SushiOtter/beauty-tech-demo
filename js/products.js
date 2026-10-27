@@ -39,3 +39,13 @@ export function getAgeRange(age) {
 export function getAgeProfile(range) {
   return ageProfiles[range] || ageProfiles.all;
 }
+
+export function getStationRecommendations(station, range) {
+  const content = station?.ageContent?.[range] || station?.ageContent?.all;
+  if (!content) return null;
+  return {
+   headline: content.headline,
+   copy: content.copy,
+   products: [...content.tags]
+  };
+}

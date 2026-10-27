@@ -16,7 +16,7 @@ export function iconSVG(name) {
  return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${iconShapes[name] || iconShapes.newness}</svg>`;
 }
 export async function loadConfiguration() {
- const response = await fetch("./data/contenido.json?v=32");
+ const response = await fetch("./data/contenido.json?v=33");
  if (!response.ok) throw new Error("No se ha podido cargar data/contenido.json");
  const data = await response.json();
  if (!Array.isArray(data.stations) || data.stations.length !== 5) throw new Error("La configuración debe contener cinco estaciones comerciales.");

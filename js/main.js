@@ -1,11 +1,11 @@
 import { appState, stationStates } from "./state.js";
-import { loadConfiguration, renderConfigs } from "./configuration.js?v=32";
-import { renderDevices } from "./panels.js?v=32";
-import { initializeEventEngine } from "./events.js?v=32";
-import { initializeAdmin } from "./admin.js?v=32";
+import { loadConfiguration, renderConfigs } from "./configuration.js?v=33";
+import { renderDevices } from "./panels.js?v=33";
+import { initializeEventEngine } from "./events.js?v=33";
+import { initializeAdmin } from "./admin.js?v=33";
 import { detectionCapabilities } from "./detection.js";
 import { $ } from "./utils.js";
-import { initializeMediaControls } from "./media.js?v=32";
+import { initializeMediaControls } from "./media.js?v=33";
 
 async function boot() {
  try {

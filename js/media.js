@@ -1,6 +1,6 @@
 import { appState } from "./state.js";
 import { $, escapeHTML } from "./utils.js";
-import { renderDevices } from "./panels.js?v=32";
+import { renderDevices } from "./panels.js?v=33";
 
 const objectUrls = new Set();
 let selectedStationId = "";

@@ -1,10 +1,10 @@
 import { appState } from "./state.js";
 import { $, announce, escapeHTML } from "./utils.js";
-import { renderDevices } from "./panels.js?v=32";
-import { emitEvent, resetStation, resetStations } from "./events.js?v=32";
-import { initializeCameraControls, resetCameraPreferences, startCamera, stopCamera } from "./camera.js?v=32";
-import { clearSavedConfiguration, loadConfiguration, renderConfigs, saveConfiguration } from "./configuration.js?v=32";
-import { ageProfiles, getAgeProfile } from "./products.js?v=32";
+import { renderDevices } from "./panels.js?v=33";
+import { emitEvent, resetStation, resetStations } from "./events.js?v=33";
+import { initializeCameraControls, resetCameraPreferences, startCamera, stopCamera } from "./camera.js?v=33";
+import { clearSavedConfiguration, loadConfiguration, renderConfigs, saveConfiguration } from "./configuration.js?v=33";
+import { ageProfiles, getAgeProfile, getStationRecommendations } from "./products.js?v=33";
 
 let guidedTimer = null;
 let guidedIndex = 0;
@@ -41,6 +41,9 @@ function startSelectedExperience(stationId) {
    hairLength: $("#demo-hair-length")?.value || "",
    beard: $("#demo-beard")?.value || ""
  };
+ setPublicMode(true, station.id);
+ $("#public-mode-label").textContent = "VÍDEO · ESPERANDO CONSENTIMIENTO";
+ $("#presentation-status").textContent = "El vídeo está en reproducción. La cámara espera el consentimiento del cliente.";
  $("#worker-view").hidden = true;
  $("#admin-view").hidden = true;
  $("#camera-error-view").hidden = true;
@@ -64,15 +67,16 @@ async function startConsentedExperience() {
  }
  $("#camera-consent-view").hidden = true;
  $("#camera-error-view").hidden = true;
- $("#scan-view").hidden = false;
+ $("#scan-view").hidden = true;
  $("#scan-status").textContent = "Buscando un solo rostro…";
  $("#scan-progress").value = 0;
  $("#scan-progress-label").textContent = "0 de 10 lecturas · máximo 20 segundos";
- $("#worker-view").hidden = !returnAfterConsent;
- $("#admin-view").hidden = returnAfterConsent;
- $("#admin-lock").hidden = false;
- setPublicMode(true, station.id);
- $("#public-mode-label").textContent = "PREPARANDO DETECCIÓN";
+ if (appState.mode !== "public" || appState.presentationStationId !== station.id) setPublicMode(true, station.id);
+ $("#worker-view").hidden = true;
+ $("#admin-view").hidden = true;
+ $("#admin-lock").hidden = true;
+ $("#public-mode-label").textContent = "ESPERANDO CLIENTE";
+ $("#presentation-status").textContent = "Detección local activa. Acércate a la tablet para ver recomendaciones.";
  clearTimeout(scanTimeout);
  scanTimeout = setTimeout(() => {
    completeAgeScan("all", "scan-timeout");
@@ -112,6 +116,7 @@ function returnToConsentOrigin() {
  $("#scan-view").hidden = true;
  $("#camera-consent-view").hidden = true;
  $("#camera-error-view").hidden = true;
+ if (appState.mode === "public") setPublicMode(false);
  $("#worker-view").hidden = !returnAfterConsent;
  $("#admin-view").hidden = returnAfterConsent;
  $("#admin-lock").hidden = false;
@@ -147,6 +152,8 @@ function continueWithoutCamera() {
   setPublicMode(true, pendingStationId);
  }
  completeAgeScan("all", "no-camera");
+ $("#public-mode-label").textContent = "SECCIÓN · CONTENIDO GENERAL";
+ $("#presentation-status").textContent = "Se muestran recomendaciones generales para la sección seleccionada.";
  announce("Se muestran recomendaciones generales para todas las edades; no se ha usado la cámara.");
 }
 function startCameraFreeDemo() {
@@ -166,14 +173,26 @@ function updateAgeRecommendations(range, manuallySelected = false, reason = "") 
  const copy = $("#age-recommendation-copy");
  const list = $("#age-product-list");
  const select = $("#age-range-select");
+ const station = appState.presentationMode ? appState.stations.get(appState.presentationStationId) : null;
+ const stationRecommendations = station ? getStationRecommendations(station, selectedRange || "all") : null;
+ const nextCustomer = $("#kiosk-next-customer");
  panel.hidden = false;
- title.textContent = selectedRange === "all" && !manuallySelected
-  ? "Contenido para todas las edades"
-  : selectedRange
-   ? `${manuallySelected ? "Rango seleccionado" : "Rango estimado"}: ${profile.label}`
-   : "No se pudo estimar la edad";
- copy.textContent = manuallySelected
-  ? "Estas sugerencias generales se muestran para el rango que has elegido."
+ if (nextCustomer) nextCustomer.hidden = !station;
+ const panelEyebrow = panel.querySelector(".eyebrow");
+ const panelNote = panel.querySelector("small");
+ if (station && panelEyebrow) panelEyebrow.textContent = `PRODUCTOS RELACIONADOS · ${profile.label}`;
+ if (station && panelNote) panelNote.textContent = "Selección orientativa para la sección elegida. No es un diagnóstico; la edad no determina por sí sola las necesidades de cuidado.";
+ title.textContent = station
+  ? `Recomendaciones · ${station.name}`
+  : selectedRange === "all" && !manuallySelected
+   ? "Contenido para todas las edades"
+   : selectedRange
+    ? `${manuallySelected ? "Rango seleccionado" : "Rango estimado"}: ${profile.label}`
+    : "No se pudo estimar la edad";
+ copy.textContent = stationRecommendations
+  ? stationRecommendations.copy
+  : manuallySelected
+   ? "Estas sugerencias generales se muestran para el rango que has elegido."
   : reason === "multiple-faces"
    ? "Se han detectado varias personas; por privacidad, mostramos contenido general."
    : reason === "under-18"
@@ -185,7 +204,8 @@ function updateAgeRecommendations(range, manuallySelected = false, reason = "") 
       : selectedRange
        ? "Estas sugerencias generales se muestran para el rango estimado. Puedes corregirlo si no coincide contigo."
        : "Se muestran ideas generales. Si quieres, selecciona un rango para adaptar las sugerencias.";
- list.replaceChildren(...profile.products.map(product => {
+ const products = stationRecommendations?.products || profile.products;
+ list.replaceChildren(...products.map(product => {
   const item = document.createElement("li");
   item.textContent = product;
   return item;
@@ -195,6 +215,12 @@ function updateAgeRecommendations(range, manuallySelected = false, reason = "") 
 function resetAgeRecommendations() {
  const panel = $("#age-recommendation-panel");
  if (panel) panel.hidden = true;
+ const panelEyebrow = panel?.querySelector(".eyebrow");
+ const panelNote = panel?.querySelector("small");
+ if (panelEyebrow) panelEyebrow.textContent = "SELECCIÓN ORIENTATIVA";
+ if (panelNote) panelNote.textContent = "La edad no determina las necesidades de la piel. Estas sugerencias son generales y puedes elegir otro rango.";
+ const nextCustomer = $("#kiosk-next-customer");
+ if (nextCustomer) nextCustomer.hidden = true;
  const select = $("#age-range-select");
  if (select) select.value = "";
 }
@@ -227,7 +253,7 @@ function initializeAgeRecommendations() {
     $("#scan-progress-label").textContent = sampleCount
      ? `${sampleCount} de 10 lecturas`
      : "Lectura no disponible · contenido general";
-    stopCamera(true, true);
+    if (detail.source !== "camera") stopCamera(true, true);
    }
   }
  });
@@ -292,12 +318,33 @@ export function initializeAdmin() {
  });
  $("#camera-consent-accept")?.addEventListener("click", startConsentedExperience);
  $("#camera-consent-decline")?.addEventListener("click", continueWithoutCamera);
+ $("#camera-consent-cancel")?.addEventListener("click", returnToWorkerHome);
+ $("#kiosk-next-customer")?.addEventListener("click", () => {
+  stopCamera(true, true);
+  resetStation(pendingStationId);
+  appState.ageGroup = "all";
+  appState.ageGroupSource = "default";
+  renderDevices();
+  resetAgeRecommendations();
+  $("#camera-consent-view").hidden = false;
+  $("#public-mode-label").textContent = "VÍDEO · ESPERANDO CONSENTIMIENTO";
+  $("#presentation-status").textContent = "La cámara está apagada. La siguiente persona puede dar su consentimiento para empezar.";
+  $("#camera-consent-accept")?.focus();
+ });
  $("#camera-error-retry")?.addEventListener("click", startConsentedExperience);
  $("#camera-error-demo")?.addEventListener("click", startCameraFreeDemo);
  $("#camera-error-no-camera")?.addEventListener("click", continueWithoutCamera);
  $("#camera-error-home")?.addEventListener("click", returnToWorkerHome);
  $("#scan-cancel")?.addEventListener("click", returnToWorkerHome);
  $("#scan-without-camera")?.addEventListener("click", continueWithoutCamera);
+ window.addEventListener("beautytech:customer-left", () => {
+  stopCamera(true, true);
+  resetAgeRecommendations();
+  $("#camera-consent-view").hidden = false;
+  $("#camera-error-view").hidden = true;
+  $("#public-mode-label").textContent = "VÍDEO · ESPERANDO CONSENTIMIENTO";
+  $("#presentation-status").textContent = "La cámara está apagada. El vídeo sigue en reproducción para la siguiente persona.";
+ });
  window.addEventListener("beautytech:session-timeout", () => {
   stopCamera();
   $("#scan-view").hidden = true;

@@ -1,4 +1,4 @@
-import { getAgeRange } from "./products.js?v=32";
+import { getAgeRange } from "./products.js?v=33";
 
 const FACE_API_URL = new URL("../vendor/face-api/face-api.js", import.meta.url).href;
 const MODEL_URL = new URL("../models/face-api/", import.meta.url).href;

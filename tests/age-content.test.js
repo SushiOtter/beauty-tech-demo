@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { access, readFile, stat } from "node:fs/promises";
-import { ageProfiles, getAgeRange } from "../js/products.js";
+import { ageProfiles, getAgeRange, getStationRecommendations } from "../js/products.js";
 
 const profileKeys = ["18-29", "30-44", "45-59", "60+", "all"];
 
@@ -31,6 +31,11 @@ test("each of five stations defines content and media slots for all five profile
       assert.equal(typeof station.posterByAge[key], "string", `${station.id} poster ${key}`);
       assert.equal(typeof station.ageContent[key].headline, "string", `${station.id} headline ${key}`);
       assert.equal(station.ageContent[key].tags.length, 3, `${station.id} tags ${key}`);
+      assert.deepEqual(getStationRecommendations(station, key), {
+        headline: station.ageContent[key].headline,
+        copy: station.ageContent[key].copy,
+        products: station.ageContent[key].tags
+      }, `${station.id} recommendations ${key}`);
       const videoPath = station.video[key];
       const posterPath = station.posterByAge[key];
       assert.match(videoPath, /^assets\/videos\/age-recommendations\/[a-z0-9-]+\.mp4$/);

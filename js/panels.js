@@ -1,7 +1,7 @@
 import { appState, stationStates } from "./state.js";
 import { $, escapeHTML } from "./utils.js";
-import { iconSVG } from "./configuration.js?v=32";
-import { ageProfiles } from "./products.js?v=32";
+import { iconSVG } from "./configuration.js?v=33";
+import { ageProfiles } from "./products.js?v=33";
 
 function deviceMarkup(station, index, withVideo = false, publicMode = false) {
  const playing = station.state === stationStates.PLAYING || station.state === stationStates.ATTENTION;
@@ -15,6 +15,9 @@ function deviceMarkup(station, index, withVideo = false, publicMode = false) {
  const campaign = clip ? `SELECCIÓN ${Math.min((station.clipIndex || 0) + 1, 2)} DE 2` : `${station.contentType || "Campaña"} · ${station.family}`;
  const tags = clip ? (clip.tags || []).slice(0,3).join(" · ") : (ageContent?.tags || station.tags || []).join(" · ");
  const mediaSlot = station.mediaSlot === null ? -1 : station.mediaSlot ?? station.clipIndex;
+ const kioskVideoUrl = publicMode && appState.presentationMode && station.id === appState.presentationStationId
+  ? station.video?.[appState.ageGroup]
+  : "";
  const selectedMedia = withVideo && playing && mediaSlot >= 0 ? station.mediaFiles?.[mediaSlot] : null;
  const media = selectedMedia && (selectedMedia.audience === appState.ageGroup || selectedMedia.audience === "all" && appState.ageGroup === "all")
   ? selectedMedia
@@ -28,13 +31,15 @@ function deviceMarkup(station, index, withVideo = false, publicMode = false) {
     .map(source => `<source src="${escapeHTML(source.url)}"${source.type ? ` type="${escapeHTML(source.type)}"` : ""}>`)
     .join("")
   : "";
- const mediaMarkup = media?.kind === "external"
+ const mediaMarkup = kioskVideoUrl
+   ? `<video class="device-video kiosk-loop-video" muted autoplay loop playsinline aria-label="Vídeo de ${escapeHTML(station.name)}"><source src="${escapeHTML(new URL(kioskVideoUrl, document.baseURI).href)}" type="video/mp4"></video>`
+   : media?.kind === "external"
    ? `<a class="media-external-link" href="${escapeHTML(media.url)}" target="_blank" rel="noopener noreferrer" aria-label="Abrir vídeo de ${escapeHTML(station.name)} en ${escapeHTML(media.provider)}"><span class="media-external-provider">${escapeHTML(media.provider)}</span><span class="media-external-title">Ver vídeo</span><span class="media-external-hint">Se abrirá fuera de la experiencia</span></a>`
    : media?.failed
      ? `<a class="media-external-link" href="${escapeHTML(media.sourceUrl)}" target="_blank" rel="noopener noreferrer" aria-label="Abrir vídeo de ${escapeHTML(station.name)} en una pestaña nueva"><span class="media-external-provider">Vídeo no disponible aquí</span><span class="media-external-title">Abrir enlace</span><span class="media-external-hint">Comprueba el acceso o el formato en el sitio original</span></a>`
      : media ? `<video class="device-video" data-station="${station.id}" data-slot="${mediaSlot || 0}" data-media-url="${escapeHTML(media.url)}"${media.poster ? ` poster="${escapeHTML(media.poster)}"` : ""} muted autoplay loop playsinline aria-label="Vídeo de ${escapeHTML(station.name)}">${mediaSources}</video>` : "";
  return `<article class="device ${playing?"is-playing":""} ${!station.enabled?"is-disabled":""}" data-station-id="${escapeHTML(station.id)}" data-age-range="${escapeHTML(appState.ageGroup)}" style="--device-accent:${station.tint};--device-deep:${station.deep}" aria-label="${escapeHTML(station.name)}: ${stateLabel}">
-  <div class="device-screen ${media ? "has-video" : ""} ${posterUrl ? "has-poster" : ""}">
+  <div class="device-screen ${media || kioskVideoUrl ? "has-video" : ""} ${posterUrl ? "has-poster" : ""}">
   ${posterMarkup}
   ${mediaMarkup}
   <div class="device-top"><span class="device-icon">${iconSVG(station.icon)}</span>${publicMode ? "" : `<span class="device-index">BT / 0${index+1}</span>`}</div>
@@ -109,8 +114,11 @@ export function renderDevices() {
  const admin = $("#device-grid"), pub = $("#public-grid");
  if (admin) admin.innerHTML = stations.map((s,i)=>deviceMarkup(s,i, appState.mode !== "public")).join("") + sensorMarkup();
  if (pub) {
-  const visibleStations = stations;
-  pub.innerHTML = visibleStations.map((s,i)=>deviceMarkup(s,i, true, true)).join("") + sensorMarkup();
+  const visibleStations = appState.presentationMode
+   ? stations.filter(station => station.id === appState.presentationStationId)
+   : stations;
+   const sensor = appState.presentationMode ? "" : sensorMarkup();
+   pub.innerHTML = visibleStations.map((s,i)=>deviceMarkup(s,i, true, true)).join("") + sensor;
  }
  document.querySelectorAll("[data-open-station]").forEach(button => button.addEventListener("click", () => {
   const station = appState.stations.get(button.dataset.openStation);
