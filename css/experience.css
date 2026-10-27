@@ -673,62 +673,115 @@ body.presentation-mode .presentation-status {
 body.presentation-mode #age-recommendation-panel:not([hidden]) {
   position: fixed;
   z-index: 24;
-  inset: auto 50% 50px auto;
+  inset: auto 50% clamp(52px, 6vh, 64px) auto;
   display: grid !important;
   grid-template-columns: minmax(0, 1fr);
   gap: 8px;
-  width: min(900px, calc(100vw - 40px));
-  max-height: min(52vh, 430px);
+  width: min(940px, calc(100vw - 40px));
+  max-height: min(44vh, 350px);
   overflow: auto;
   margin: 0;
-  padding: clamp(16px, 2.4vw, 26px);
+  padding: clamp(16px, 2vw, 24px);
   transform: translateX(50%);
   border: 1px solid rgba(255, 255, 255, .3);
-  border-radius: 20px;
-  background: rgba(250, 246, 239, .96);
+  border-radius: 22px;
+  background: rgba(250, 246, 239, .97);
   color: var(--ink);
-  box-shadow: 0 16px 54px rgba(0, 0, 0, .28);
+  box-shadow: 0 20px 70px rgba(0, 0, 0, .34);
+  backdrop-filter: blur(18px);
+  animation: recommendation-arrive .35s cubic-bezier(.2, .75, .25, 1) both;
+}
+
+body.presentation-mode #age-recommendation-panel > div:first-child {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(240px, .75fr);
+  grid-template-areas:
+    "eyebrow products"
+    "title products"
+    "copy products"
+    "note note"
+    "action action";
+  align-items: start;
+  gap: 6px 26px;
+}
+
+body.presentation-mode #age-recommendation-panel > div:first-child > .eyebrow {
+  grid-area: eyebrow;
 }
 
 body.presentation-mode #age-recommendation-panel h2 {
+  grid-area: title;
   margin: 0 0 6px;
-  font-size: clamp(22px, 3vw, 34px);
+  font-size: clamp(24px, 2.3vw, 31px);
+  line-height: 1.08;
 }
 
 body.presentation-mode #age-recommendation-panel p:not(.eyebrow) {
+  grid-area: copy;
   margin: 0;
-  font-size: clamp(12px, 1.4vw, 16px);
+  color: #625a52;
+  font-size: 13px;
+  line-height: 1.55;
 }
 
 body.presentation-mode #age-recommendation-panel ul {
+  grid-area: products;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
-  margin: 10px 0 4px;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 7px;
+  margin: 12px 0 4px;
   padding: 0;
   list-style: none;
 }
 
 body.presentation-mode #age-recommendation-panel li {
-  padding: 12px 14px;
-  border: 1px solid rgba(140, 123, 107, .25);
+  padding: 10px 12px;
+  border: 1px solid rgba(140, 123, 107, .18);
   border-radius: 12px;
-  background: rgba(255, 255, 255, .66);
-  font-size: clamp(12px, 1.35vw, 15px);
+  background: rgba(255, 255, 255, .72);
+  color: #302b27;
+  font-size: 13px;
+  line-height: 1.35;
 }
 
 body.presentation-mode #age-recommendation-panel small {
+  grid-area: note;
+  color: #746b62;
   font-size: 10px;
+  line-height: 1.5;
+}
+
+body.presentation-mode #age-recommendation-panel > div:first-child > button {
+  grid-area: action;
+  justify-self: start;
 }
 
 body.presentation-mode .age-range-control {
   display: none;
 }
 
+body.presentation-mode #age-recommendation-panel:not([hidden]) ~ .presentation-status {
+  display: none;
+}
+
 body.presentation-mode #kiosk-next-customer:not([hidden]) {
   justify-self: start;
-  min-height: 46px;
-  margin-top: 6px;
+  min-height: 48px;
+  margin-top: 8px;
+  padding-inline: 24px;
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--ivory);
+}
+
+@keyframes recommendation-arrive {
+  from { opacity: 0; transform: translateX(50%) translateY(12px); }
+  to { opacity: 1; transform: translateX(50%) translateY(0); }
+}
+
+@keyframes recommendation-arrive-mobile {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 body.presentation-mode #camera-consent-view:not([hidden]) {
@@ -851,9 +904,24 @@ body.presentation-mode .presentation-exit {
   }
 
   body.presentation-mode #age-recommendation-panel:not([hidden]) {
-    grid-template-columns: minmax(0, 1fr);
+    inset: auto 10px 10px;
+    width: auto;
     max-height: min(58vh, 480px);
     padding: 16px;
+    transform: none;
+    animation-name: recommendation-arrive-mobile;
+  }
+
+  body.presentation-mode #age-recommendation-panel > div:first-child {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "eyebrow"
+      "title"
+      "copy"
+      "products"
+      "note"
+      "action";
+    gap: 6px;
   }
 
   body.presentation-mode #age-recommendation-panel ul {
@@ -872,9 +940,9 @@ body.presentation-mode .presentation-exit {
   }
 
   body.presentation-mode .presentation-status {
-    inset: auto 10px 10px;
-    max-width: none;
-    text-align: center;
+    inset: 10px auto auto 10px;
+    max-width: min(55vw, 360px);
+    text-align: left;
   }
 
   @media (max-width: 620px) {
@@ -924,6 +992,13 @@ body.presentation-mode .presentation-exit {
 
   body.presentation-mode .age-range-control label {
     grid-column: 1 / -1;
+  }
+}
+
+@media (orientation: portrait) {
+  body.presentation-mode .public-grid .device-video {
+    object-fit: contain;
+    object-position: center 16%;
   }
 }
 
