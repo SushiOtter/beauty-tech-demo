@@ -40,45 +40,45 @@
           "headline": "Limpieza profunda, a tu ritmo",
           "copy": "Máscara LED y cuidado para una piel con aspecto fresco.",
           "tags": [
-            "Limpieza facial",
-            "Máscara LED",
-            "Imperfecciones"
+            "Dispositivo de limpieza facial",
+            "Máscara LED cosmética",
+            "Masajeador facial"
           ]
         },
         "30-44": {
           "headline": "Luz y confort en cada gesto",
           "copy": "Radiofrecuencia cosmética, luminosidad e hidratación.",
           "tags": [
-            "Radiofrecuencia",
-            "Luminosidad",
-            "Hidratación"
+            "Dispositivo de radiofrecuencia cosmética",
+            "Sérum iluminador",
+            "Crema hidratante"
           ]
         },
         "45-59": {
           "headline": "Un ritual de firmeza",
           "copy": "Dispositivos cosméticos, microcorrientes y masaje lifting.",
           "tags": [
-            "Firmeza",
-            "Microcorrientes",
-            "Masaje lifting"
+            "Dispositivo de microcorrientes",
+            "Masajeador facial lifting",
+            "Sérum reafirmante"
           ]
         },
         "60+": {
           "headline": "Cuidado suave y tonificante",
           "copy": "Un masaje facial delicado para disfrutar el ritual.",
           "tags": [
-            "Masaje suave",
-            "Tono",
-            "Cuidado en cabina"
+            "Masajeador facial suave",
+            "Crema hidratante calmante",
+            "Mascarilla facial hidratante"
           ]
         },
         "all": {
           "headline": "Tecnología y cuidado profesional",
-          "copy": "Descubre dispositivos cosméticos y un diagnóstico de piel profesional.",
+          "copy": "Explora dispositivos cosméticos y rutinas de cuidado profesional.",
           "tags": [
-            "Aparatología",
-            "Piel",
-            "Cuidado experto"
+            "Dispositivo de limpieza facial",
+            "Máscara LED cosmética",
+            "Masajeador facial"
           ]
         }
       },
@@ -144,8 +144,8 @@
           "copy": "Tinta de labios, iluminador y sombras de tonos vivos.",
           "tags": [
             "Tinta de labios",
-            "Iluminador",
-            "Color"
+            "Iluminador facial",
+            "Paleta de maquillaje"
           ]
         },
         "30-44": {
@@ -153,7 +153,7 @@
           "copy": "Base fluida, corrector y rubor cremoso para cada día.",
           "tags": [
             "Base fluida",
-            "Corrector",
+            "Corrector cremoso",
             "Rubor en crema"
           ]
         },
@@ -163,15 +163,15 @@
           "tags": [
             "Base hidratante",
             "Labial cremoso",
-            "Máscara"
+            "Máscara de pestañas"
           ]
         },
         "60+": {
           "headline": "Belleza suave y luminosa",
           "copy": "Maquillaje natural con un labial confortable e hidratante.",
           "tags": [
-            "Maquillaje natural",
-            "Tonos suaves",
+            "Base de maquillaje ligera",
+            "Paleta de tonos suaves",
             "Labial hidratante"
           ]
         },
@@ -179,9 +179,9 @@
           "headline": "Tonos para expresarte",
           "copy": "Brochas, paletas y tonos para distintas pieles y estilos.",
           "tags": [
-            "Brochas",
-            "Paletas",
-            "Tonos diversos"
+            "Set de brochas faciales",
+            "Paleta de maquillaje",
+            "Labial en tonos variados"
           ]
         }
       },
@@ -246,7 +246,7 @@
           "headline": "Brillo para llevar",
           "copy": "Champú, protector térmico y mascarilla para un cabello luminoso.",
           "tags": [
-            "Champú",
+            "Champú de uso frecuente",
             "Protector térmico",
             "Mascarilla de brillo"
           ]
@@ -255,17 +255,17 @@
           "headline": "Reparación con ligereza",
           "copy": "Cuidado reparador, sérum antiencrespamiento y cuero cabelludo.",
           "tags": [
-            "Reparación",
-            "Sérum",
-            "Cuero cabelludo"
+            "Tratamiento capilar reparador",
+            "Sérum antiencrespamiento",
+            "Exfoliante de cuero cabelludo"
           ]
         },
         "45-59": {
           "headline": "Un gesto nutritivo",
           "copy": "Ampollas fortificantes, densidad y nutrición capilar.",
           "tags": [
-            "Fortalecimiento",
-            "Densidad",
+            "Champú fortalecedor",
+            "Sérum densificante",
             "Mascarilla nutritiva"
           ]
         },
@@ -273,18 +273,18 @@
           "headline": "Suavidad para tonos plateados",
           "copy": "Cuidado delicado para cabello canoso y plateado.",
           "tags": [
-            "Cuidado suave",
-            "Cabello canoso",
-            "Tono plateado"
+            "Champú suave",
+            "Champú para cabello canoso",
+            "Mascarilla hidratante"
           ]
         },
         "all": {
           "headline": "Cuidado capilar en el salón",
           "copy": "Descubre texturas, gestos profesionales y rituales de salón.",
           "tags": [
-            "Salón",
-            "Texturas",
-            "Cuidado capilar"
+            "Champú de cuidado diario",
+            "Sérum capilar",
+            "Mascarilla nutritiva"
           ]
         }
       },
@@ -349,26 +349,26 @@
           "headline": "Novedades para probar",
           "copy": "Gloss, cápsulas y texturas de edición limitada.",
           "tags": [
-            "Tendencia",
-            "Gloss",
-            "Edición limitada"
+            "Gloss labial de tendencia",
+            "Paleta de edición limitada",
+            "Cápsula de cuidado facial"
           ]
         },
         "30-44": {
           "headline": "Nuevos gestos de cuidado",
           "copy": "Sérum, contorno de ojos y protección para cada día.",
           "tags": [
-            "Sérum",
+            "Sérum facial",
             "Contorno de ojos",
-            "Protección"
+            "Protector solar facial"
           ]
         },
         "45-59": {
           "headline": "Texturas ricas para descubrir",
           "copy": "Cremas envolventes y sets especiales para regalar.",
           "tags": [
-            "Crema rica",
-            "Textura",
+            "Crema facial nutritiva",
+            "Sérum de textura rica",
             "Set de regalo"
           ]
         },
@@ -376,8 +376,8 @@
           "headline": "Confort para regalarte",
           "copy": "Texturas reconfortantes y nuevos sets de regalo.",
           "tags": [
-            "Confort",
-            "Textura",
+            "Crema facial de confort",
+            "Sérum hidratante",
             "Set de regalo"
           ]
         },
@@ -385,9 +385,9 @@
           "headline": "Lo más nuevo en belleza",
           "copy": "Descubre lanzamientos, texturas y favoritos de temporada.",
           "tags": [
-            "Lanzamientos",
-            "Texturas",
-            "Más vendidos"
+            "Novedad de cuidado facial",
+            "Lanzamiento de maquillaje",
+            "Set de belleza de temporada"
           ]
         }
       },
@@ -452,45 +452,45 @@
           "headline": "Explora tu próximo tono",
           "copy": "Balayage, tonos pastel y color de fantasía.",
           "tags": [
-            "Tonos pastel",
-            "Fantasía",
-            "Balayage"
+            "Coloración fantasía",
+            "Tinte de tonos pastel",
+            "Kit de balayage"
           ]
         },
         "30-44": {
           "headline": "Luz en tonos cálidos",
           "copy": "Mechas suaves y matices cálidos para un cambio sutil.",
           "tags": [
-            "Mechas suaves",
-            "Tonos cálidos",
-            "Brillo"
+            "Kit de mechas suaves",
+            "Tinte de tonos cálidos",
+            "Gloss capilar"
           ]
         },
         "45-59": {
           "headline": "Color natural, brillo visible",
           "copy": "Cobertura de canas y tonos naturales con brillo.",
           "tags": [
-            "Cobertura de canas",
-            "Tonos naturales",
-            "Brillo"
+            "Tinte con cobertura de canas",
+            "Coloración de tono natural",
+            "Gloss de brillo"
           ]
         },
         "60+": {
           "headline": "Plata con luz propia",
           "copy": "Tonos plata y platino para un acabado luminoso.",
           "tags": [
-            "Plata",
-            "Platino",
-            "Luminosidad"
+            "Tinte plata",
+            "Coloración platino",
+            "Gloss iluminador"
           ]
         },
         "all": {
           "headline": "Encuentra tu tono",
           "copy": "Muestrario de tonos y técnicas de coloración en el salón.",
           "tags": [
-            "Muestrario",
-            "Colorista",
-            "Coloración"
+            "Tinte de coloración",
+            "Tratamiento gloss",
+            "Tratamiento protector del color"
           ]
         }
       },

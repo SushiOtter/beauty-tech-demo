@@ -1,6 +1,6 @@
 # Beauty Tech Retail Experience
 
-**Versión 33.** Experiencia de tablet por sección, con vídeo local, consentimiento y recomendaciones orientativas procesadas en el navegador.
+**Versión 34.** Experiencia de tablet por sección, con vídeo local, consentimiento y recomendaciones orientativas procesadas en el navegador.
 
 ## Inicio rápido en Windows
 
@@ -12,22 +12,22 @@ No requiere Node, paquetes Python, claves ni conexión a internet para la detecc
 
 ## Recorrido
 
-1. En la pantalla de trabajador, elige la sección asignada a la tablet y pulsa **Comenzar**.
+1. En la pantalla de trabajador, elige la sección asignada a la tablet; la vista previa muestra el contenido de esa sección. Pulsa **Iniciar experiencia**.
 2. Se reproduce en bucle el vídeo local de esa sección. La cámara permanece apagada hasta que el cliente lee el aviso y pulsa **Aceptar y comenzar**; también puede continuar sin cámara.
 3. Con el consentimiento, la cámara detecta localmente la presencia de un rostro. Tras una presencia sostenida, estima una franja aproximada con diez lecturas y mediana; solo considera personas adultas y no calcula ni guarda una edad exacta.
-4. Aparecen recomendaciones de la sección elegida, adaptadas a la franja estimada. Si no se puede estimar o se rechaza la cámara, se muestra contenido general de esa misma sección. No se muestran las otras secciones.
+4. Aparecen sugerencias editoriales de la sección elegida, adaptadas a la franja estimada. Si no se puede estimar o se rechaza la cámara, se muestra contenido general de esa misma sección. La pantalla de cliente solo muestra la sección seleccionada.
 5. Cuando la persona se aleja, se apaga la cámara, se oculta la recomendación y vuelve el aviso de consentimiento para el siguiente cliente. También hay un botón para terminar manualmente.
 
 ## Funcionalidad
 
 - Cinco estaciones configurables y contenido local de muestra.
 - Modos trabajador, administración y presentación a pantalla completa.
-- El trabajador asigna una sección a la tablet; el vídeo de esa sección ocupa la pantalla y se reproduce en bucle.
+- El trabajador asigna una sección desde una vista previa visual; el vídeo de esa sección ocupa el escenario y se reproduce en bucle.
 - Consentimiento explícito de cada cliente antes de solicitar acceso a la cámara.
 - Detección facial y estimación local con diez lecturas y mediana; backends WebGL y CPU como respaldo.
 - Cuatro franjas adultas (18–29, 30–44, 45–59 y 60+) más contenido general para todas las edades. La edad aparente no verifica la edad real.
 - Contenido editable por sección y franja en `data/contenido.json`; tras el escaneo solo se muestran recomendaciones de la sección seleccionada.
-- Las recomendaciones son categorías editoriales de ejemplo (etiquetas de `ageContent`), no un catálogo real de SKU, marcas, precios o disponibilidad.
+- Cada franja muestra tres tipos de producto sugeridos para la sección (por ejemplo, máscara LED cosmética o paleta de maquillaje); son ideas editoriales, no un catálogo real de SKU, marcas, precios o disponibilidad.
 - **Vídeos locales:** se incluyen 25 clips originales H.264 (uno por cada estación y franja), con 25 pósteres ilustrados sin texto duplicado. Las piezas ilustran la categoría y reproducen el titular, los tags y la descripción editorial de la combinación exacta; no muestran modelos reales ni fingen que la cámara lee la piel, el pelo o la identidad. El inventario y licencia figuran en `CREDITS.md`.
 - Modos de simulación manual/guiada sin cámara, claramente identificados como simulación.
 - Cinco zonas de cámara configurables, ajuste de confianza y diseño responsive.

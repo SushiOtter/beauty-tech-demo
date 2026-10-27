@@ -14,7 +14,7 @@
   <link rel="stylesheet" href="css/animations.css?v=33">
   <link rel="stylesheet" href="css/responsive.css?v=33">
   <link rel="stylesheet" href="css/admin.css">
-  <link rel="stylesheet" href="css/experience.css?v=34">
+  <link rel="stylesheet" href="css/experience.css?v=41">
 </head>
 <body>
   <div class="ambient ambient-one" aria-hidden="true"></div>
@@ -37,16 +37,30 @@
     </header>
 
     <section id="worker-view" class="worker-view" aria-labelledby="worker-title">
-      <p class="eyebrow">BEAUTY TECH · PREPARACIÓN DE TABLET</p>
-      <h1 id="worker-title">Elige una sección.<br><em>Inicia el vídeo.</em></h1>
-      <p class="worker-copy">La tablet reproducirá el vídeo de esa sección y esperará a detectar el rostro de un cliente para mostrar recomendaciones relacionadas.</p>
-      <div class="worker-controls">
-        <label for="worker-station">Sección para esta tablet
-          <select id="worker-station" class="field-select"></select>
-        </label>
-        <button class="button button-primary" id="worker-start" type="button">Comenzar</button>
+      <div class="worker-layout">
+        <div class="worker-main">
+          <p class="eyebrow">BEAUTY TECH <span>·</span> PREPARACIÓN DE TABLET</p>
+          <h1 id="worker-title">Una experiencia<br><em>hecha para ti.</em></h1>
+          <p class="worker-copy">Selecciona la sección de esta tablet. El vídeo dará la bienvenida y, solo con consentimiento, se mostrarán sugerencias relacionadas.</p>
+          <div class="worker-controls">
+            <label for="worker-station">SECCIÓN ASIGNADA
+              <select id="worker-station" class="field-select"></select>
+            </label>
+            <button class="button button-primary" id="worker-start" type="button">Iniciar experiencia <span aria-hidden="true">→</span></button>
+          </div>
+          <p class="worker-note"><span aria-hidden="true">◉</span> Cámara apagada hasta el consentimiento · Procesamiento local · Sin imágenes guardadas</p>
+        </div>
+        <aside class="worker-preview" aria-live="polite">
+          <img id="worker-preview-poster" src="assets/videos/age-recommendations/apparatology-all.jpg" alt="">
+          <div class="worker-preview-shade"></div>
+          <div class="worker-preview-caption">
+            <span class="worker-preview-kicker">VÍDEO DE BIENVENIDA</span>
+            <strong id="worker-preview-title">Aparatología</strong>
+            <span id="worker-preview-copy">Tecnología para tu piel</span>
+          </div>
+          <span class="worker-preview-play" aria-hidden="true">▶</span>
+        </aside>
       </div>
-      <p class="worker-note">La cámara no se activa hasta que el cliente acepta en la tablet. Las imágenes se procesan localmente y no se guardan.</p>
     </section>
 
     <section id="camera-consent-view" class="worker-view camera-flow-view" aria-labelledby="camera-consent-title" hidden>
@@ -205,7 +219,7 @@
 
     <section id="public-view" class="public-view" hidden aria-label="Modo público de las estaciones">
       <div class="public-header">
-        <div><p class="eyebrow">BEAUTY TECH · EXPERIENCIA EN TIENDA</p><h1>Descubre tu próximo <em>ritual.</em></h1></div>
+        <div><p class="eyebrow">BEAUTY TECH · EXPERIENCIA EN TIENDA</p><h1><span id="presentation-heading">Descubre tu próximo</span> <em id="presentation-heading-accent">ritual.</em></h1></div>
         <div class="public-header-actions"><div class="public-status"><i></i> <span id="public-mode-label">ESPERA DE PRESENCIA</span></div><button class="button button-secondary" id="guided-stop" type="button" hidden>Detener demostración</button></div>
       </div>
       <section id="age-recommendation-panel" class="age-recommendation-panel" aria-live="polite" hidden>
@@ -223,6 +237,12 @@
           <button id="age-range-update" class="button button-secondary" type="button">Actualizar sugerencias</button>
         </div>
       </section>
+      <aside id="kiosk-welcome-panel" class="kiosk-welcome-panel" aria-live="polite" hidden>
+        <p class="eyebrow">ENCUENTRA TU PRÓXIMO RITUAL</p>
+        <h2 id="kiosk-welcome-station">Tu experiencia empieza aquí</h2>
+        <p>Disfruta del vídeo de la sección. Si quieres sugerencias adaptadas, acepta el aviso de privacidad en pantalla.</p>
+        <div class="kiosk-local-badge"><span aria-hidden="true">✦</span> Todo se procesa en esta tablet</div>
+      </aside>
       <p id="presentation-status" class="presentation-status" role="status" aria-live="polite">Preparando el detector local…</p>
       <div id="public-grid" class="device-grid public-grid"></div>
       <section id="guided-complete" class="guided-complete" aria-live="polite" hidden>
@@ -242,6 +262,6 @@
   <script>
     if (location.protocol === "file:") document.getElementById("boot-warning").hidden = false;
   </script>
-  <script type="module" src="js/main.js?v=33"></script>
+  <script type="module" src="js/main.js?v=40"></script>
 </body>
 </html>

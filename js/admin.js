@@ -3,7 +3,7 @@ import { $, announce, escapeHTML } from "./utils.js";
 import { renderDevices } from "./panels.js?v=33";
 import { emitEvent, resetStation, resetStations } from "./events.js?v=33";
 import { initializeCameraControls, resetCameraPreferences, startCamera, stopCamera } from "./camera.js?v=33";
-import { clearSavedConfiguration, loadConfiguration, renderConfigs, saveConfiguration } from "./configuration.js?v=33";
+import { clearSavedConfiguration, loadConfiguration, renderConfigs, saveConfiguration } from "./configuration.js?v=34";
 import { ageProfiles, getAgeProfile, getStationRecommendations } from "./products.js?v=33";
 
 let guidedTimer = null;
@@ -28,6 +28,18 @@ function syncWorkerStationSelection() {
    $("#worker-start").disabled = false;
    $("#start-section-experience").disabled = false;
  }
+ updateWorkerPreview(select.value);
+}
+function updateWorkerPreview(stationId) {
+ const station = appState.stations.get(stationId);
+ const poster = $("#worker-preview-poster");
+ const title = $("#worker-preview-title");
+ const copy = $("#worker-preview-copy");
+ if (!station || !poster || !title || !copy) return;
+ poster.src = station.posterByAge?.all || "";
+ poster.alt = `Póster del vídeo de ${station.name}`;
+ title.textContent = station.name;
+ copy.textContent = station.ageContent?.all?.headline || station.copy || "";
 }
 function startSelectedExperience(stationId) {
  const station = appState.stations.get(stationId);
@@ -42,7 +54,10 @@ function startSelectedExperience(stationId) {
    beard: $("#demo-beard")?.value || ""
  };
  setPublicMode(true, station.id);
+ $("#presentation-heading").textContent = station.name;
+ $("#presentation-heading-accent").textContent = "a tu manera.";
  $("#public-mode-label").textContent = "VÍDEO · ESPERANDO CONSENTIMIENTO";
+ $("#kiosk-welcome-station").textContent = station.name;
  $("#presentation-status").textContent = "El vídeo está en reproducción. La cámara espera el consentimiento del cliente.";
  $("#worker-view").hidden = true;
  $("#admin-view").hidden = true;
@@ -177,13 +192,14 @@ function updateAgeRecommendations(range, manuallySelected = false, reason = "") 
  const stationRecommendations = station ? getStationRecommendations(station, selectedRange || "all") : null;
  const nextCustomer = $("#kiosk-next-customer");
  panel.hidden = false;
+ $("#kiosk-welcome-panel").hidden = true;
  if (nextCustomer) nextCustomer.hidden = !station;
  const panelEyebrow = panel.querySelector(".eyebrow");
  const panelNote = panel.querySelector("small");
- if (station && panelEyebrow) panelEyebrow.textContent = `PRODUCTOS RELACIONADOS · ${profile.label}`;
- if (station && panelNote) panelNote.textContent = "Selección orientativa para la sección elegida. No es un diagnóstico; la edad no determina por sí sola las necesidades de cuidado.";
+ if (station && panelEyebrow) panelEyebrow.textContent = `PRODUCTOS PARA DESCUBRIR · ${profile.label}`;
+ if (station && panelNote) panelNote.textContent = "Sugerencias editoriales para esta sección; no representan catálogo, precio ni disponibilidad. La edad no determina por sí sola las necesidades de cuidado.";
  title.textContent = station
-  ? `Recomendaciones · ${station.name}`
+  ? stationRecommendations.headline
   : selectedRange === "all" && !manuallySelected
    ? "Contenido para todas las edades"
    : selectedRange
@@ -221,6 +237,8 @@ function resetAgeRecommendations() {
  if (panelNote) panelNote.textContent = "La edad no determina las necesidades de la piel. Estas sugerencias son generales y puedes elegir otro rango.";
  const nextCustomer = $("#kiosk-next-customer");
  if (nextCustomer) nextCustomer.hidden = true;
+ const welcome = $("#kiosk-welcome-panel");
+ if (welcome) welcome.hidden = !appState.presentationMode;
  const select = $("#age-range-select");
  if (select) select.value = "";
 }
@@ -310,6 +328,7 @@ export function initializeAdmin() {
    const cameraSelect = $("#camera-station");
    cameraSelect.value = event.target.value;
    cameraSelect.dispatchEvent(new Event("change"));
+   updateWorkerPreview(event.target.value);
  });
  $("#worker-start")?.addEventListener("click", () => startSelectedExperience($("#worker-station").value));
  $("#start-section-experience")?.addEventListener("click", () => startSelectedExperience($("#camera-station")?.value || ""));
@@ -503,6 +522,8 @@ export function setPublicMode(enabled, presentationStationId = "") {
  if (!enabled) {
   stopGuidedDemo();
   $("#scan-view").hidden = true;
+  $("#camera-consent-view").hidden = true;
+  $("#camera-error-view").hidden = true;
   const player = $("#station-player");
   player?.querySelector("video")?.pause();
   if (player) player.hidden = true;
@@ -533,6 +554,9 @@ export function setPublicMode(enabled, presentationStationId = "") {
    window.dispatchEvent(new CustomEvent("beautytech:activity"));
    announce("Modo público activo. La instalación espera señales de interés.");
  } else {
+   $("#presentation-heading").textContent = "Descubre tu próximo";
+   $("#presentation-heading-accent").textContent = "ritual.";
+   $("#admin-lock").hidden = false;
    appState.sessionActive = false;
    resetStations();
    announce("Administración disponible.");
