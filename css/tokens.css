@@ -1,0 +1,16 @@
+:root {
+  --ivory: #FAF6EF;
+  --cream: #F1E9DC;
+  --nude: #D9C3AE;
+  --taupe: #8C7B6B;
+  --ink: #1B1816;
+  --champagne: #C9AE7C;
+  --muted: #777067;
+  --line: rgba(57, 44, 34, .13);
+  --white: #fffdf9;
+  --success: #6f896d;
+  --serif: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  --sans: "Inter", "Segoe UI", Arial, sans-serif;
+  --radius-lg: 22px;
+  --shadow-soft: 0 20px 60px rgba(43, 31, 22, .08);
+}

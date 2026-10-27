@@ -1,0 +1,30 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: ["main"] # O la rama principal que uses (ej. master)
+
+# Cancela despliegues anteriores en curso para evitar el conflicto
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+# Opciones de permisos necesarias para GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # ... aquí van tus pasos para construir la página (npm run build, etc.) ...
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v5
+        with:
+          artifact_name: github-pagesSS

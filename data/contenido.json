@@ -1,0 +1,530 @@
+{
+  "settings": {
+    "cooldownMs": 8000,
+    "sessionTimeoutMs": 120000,
+    "attentionThresholdMs": 1800,
+    "maxConcurrent": 3
+  },
+  "stations": [
+    {
+      "id": "apparatology",
+      "name": "Aparatología",
+      "icon": "apparatology",
+      "family": "Tecnología facial",
+      "campaign": "Ritual tecnológico",
+      "headline": "Tecnología para tu piel",
+      "copy": "Precisión profesional, cuidado en cada detalle.",
+      "tags": [
+        "Limpieza avanzada",
+        "Energía facial",
+        "Cuidado experto"
+      ],
+      "tint": "#e7ddd0",
+      "deep": "#8b7259",
+      "video": {
+        "18-29": "assets/videos/age-recommendations/apparatology-18-29.mp4",
+        "30-44": "assets/videos/age-recommendations/apparatology-30-44.mp4",
+        "45-59": "assets/videos/age-recommendations/apparatology-45-59.mp4",
+        "60+": "assets/videos/age-recommendations/apparatology-60plus.mp4",
+        "all": "assets/videos/age-recommendations/apparatology-all.mp4"
+      },
+      "posterByAge": {
+        "18-29": "assets/videos/age-recommendations/apparatology-18-29.jpg",
+        "30-44": "assets/videos/age-recommendations/apparatology-30-44.jpg",
+        "45-59": "assets/videos/age-recommendations/apparatology-45-59.jpg",
+        "60+": "assets/videos/age-recommendations/apparatology-60plus.jpg",
+        "all": "assets/videos/age-recommendations/apparatology-all.jpg"
+      },
+      "ageContent": {
+        "18-29": {
+          "headline": "Limpieza profunda, a tu ritmo",
+          "copy": "Máscara LED y cuidado para una piel con aspecto fresco.",
+          "tags": [
+            "Limpieza facial",
+            "Máscara LED",
+            "Imperfecciones"
+          ]
+        },
+        "30-44": {
+          "headline": "Luz y confort en cada gesto",
+          "copy": "Radiofrecuencia cosmética, luminosidad e hidratación.",
+          "tags": [
+            "Radiofrecuencia",
+            "Luminosidad",
+            "Hidratación"
+          ]
+        },
+        "45-59": {
+          "headline": "Un ritual de firmeza",
+          "copy": "Dispositivos cosméticos, microcorrientes y masaje lifting.",
+          "tags": [
+            "Firmeza",
+            "Microcorrientes",
+            "Masaje lifting"
+          ]
+        },
+        "60+": {
+          "headline": "Cuidado suave y tonificante",
+          "copy": "Un masaje facial delicado para disfrutar el ritual.",
+          "tags": [
+            "Masaje suave",
+            "Tono",
+            "Cuidado en cabina"
+          ]
+        },
+        "all": {
+          "headline": "Tecnología y cuidado profesional",
+          "copy": "Descubre dispositivos cosméticos y un diagnóstico de piel profesional.",
+          "tags": [
+            "Aparatología",
+            "Piel",
+            "Cuidado experto"
+          ]
+        }
+      },
+      "clips": [
+        {
+          "id": "ap-01",
+          "title": "Tecnología que cuida",
+          "subtitle": "Ritual facial · 15 s",
+          "tags": [
+            "tecnología",
+            "cuidado",
+            "facial"
+          ],
+          "durationMs": 6000,
+          "video": ""
+        },
+        {
+          "id": "ap-02",
+          "title": "Un gesto profesional",
+          "subtitle": "Dispositivo destacado · 12 s",
+          "tags": [
+            "dispositivo",
+            "profesional",
+            "facial"
+          ],
+          "durationMs": 6000,
+          "video": ""
+        }
+      ]
+    },
+    {
+      "id": "makeup",
+      "name": "Maquillaje",
+      "icon": "makeup",
+      "family": "Maquillaje",
+      "campaign": "Piel luminosa",
+      "headline": "Tu luz, en primer plano",
+      "copy": "Texturas sensoriales y tonos que acompañan tu estilo.",
+      "tags": [
+        "Base ligera",
+        "Rubor en crema",
+        "Mirada luminosa"
+      ],
+      "tint": "#ead7d3",
+      "deep": "#a56e70",
+      "video": {
+        "18-29": "assets/videos/age-recommendations/makeup-18-29.mp4",
+        "30-44": "assets/videos/age-recommendations/makeup-30-44.mp4",
+        "45-59": "assets/videos/age-recommendations/makeup-45-59.mp4",
+        "60+": "assets/videos/age-recommendations/makeup-60plus.mp4",
+        "all": "assets/videos/age-recommendations/makeup-all.mp4"
+      },
+      "posterByAge": {
+        "18-29": "assets/videos/age-recommendations/makeup-18-29.jpg",
+        "30-44": "assets/videos/age-recommendations/makeup-30-44.jpg",
+        "45-59": "assets/videos/age-recommendations/makeup-45-59.jpg",
+        "60+": "assets/videos/age-recommendations/makeup-60plus.jpg",
+        "all": "assets/videos/age-recommendations/makeup-all.jpg"
+      },
+      "ageContent": {
+        "18-29": {
+          "headline": "Color para jugar",
+          "copy": "Tinta de labios, iluminador y sombras de tonos vivos.",
+          "tags": [
+            "Tinta de labios",
+            "Iluminador",
+            "Color"
+          ]
+        },
+        "30-44": {
+          "headline": "Un acabado fresco y natural",
+          "copy": "Base fluida, corrector y rubor cremoso para cada día.",
+          "tags": [
+            "Base fluida",
+            "Corrector",
+            "Rubor en crema"
+          ]
+        },
+        "45-59": {
+          "headline": "Texturas que acompañan tu piel",
+          "copy": "Base hidratante, labial cremoso y máscara de pestañas.",
+          "tags": [
+            "Base hidratante",
+            "Labial cremoso",
+            "Máscara"
+          ]
+        },
+        "60+": {
+          "headline": "Belleza suave y luminosa",
+          "copy": "Maquillaje natural con un labial confortable e hidratante.",
+          "tags": [
+            "Maquillaje natural",
+            "Tonos suaves",
+            "Labial hidratante"
+          ]
+        },
+        "all": {
+          "headline": "Tonos para expresarte",
+          "copy": "Brochas, paletas y tonos para distintas pieles y estilos.",
+          "tags": [
+            "Brochas",
+            "Paletas",
+            "Tonos diversos"
+          ]
+        }
+      },
+      "clips": [
+        {
+          "id": "mk-01",
+          "title": "Piel luminosa, sin esfuerzo",
+          "subtitle": "Campaña de maquillaje · 15 s",
+          "tags": [
+            "piel",
+            "luminosidad",
+            "base"
+          ],
+          "durationMs": 6000,
+          "video": ""
+        },
+        {
+          "id": "mk-02",
+          "title": "El color que lo cambia todo",
+          "subtitle": "Selección de tonos · 12 s",
+          "tags": [
+            "color",
+            "labios",
+            "tendencia"
+          ],
+          "durationMs": 6000,
+          "video": ""
+        }
+      ]
+    },
+    {
+      "id": "haircare",
+      "name": "Tratamientos capilares",
+      "icon": "haircare",
+      "family": "Cuidado capilar",
+      "campaign": "Ritual de reparación",
+      "headline": "Un ritual para tu cabello",
+      "copy": "Nutrición, brillo y suavidad desde la raíz hasta las puntas.",
+      "tags": [
+        "Champú nutritivo",
+        "Sérum reparador",
+        "Aceite de brillo"
+      ],
+      "tint": "#d9e0d5",
+      "deep": "#71856d",
+      "video": {
+        "18-29": "assets/videos/age-recommendations/haircare-18-29.mp4",
+        "30-44": "assets/videos/age-recommendations/haircare-30-44.mp4",
+        "45-59": "assets/videos/age-recommendations/haircare-45-59.mp4",
+        "60+": "assets/videos/age-recommendations/haircare-60plus.mp4",
+        "all": "assets/videos/age-recommendations/haircare-all.mp4"
+      },
+      "posterByAge": {
+        "18-29": "assets/videos/age-recommendations/haircare-18-29.jpg",
+        "30-44": "assets/videos/age-recommendations/haircare-30-44.jpg",
+        "45-59": "assets/videos/age-recommendations/haircare-45-59.jpg",
+        "60+": "assets/videos/age-recommendations/haircare-60plus.jpg",
+        "all": "assets/videos/age-recommendations/haircare-all.jpg"
+      },
+      "ageContent": {
+        "18-29": {
+          "headline": "Brillo para llevar",
+          "copy": "Champú, protector térmico y mascarilla para un cabello luminoso.",
+          "tags": [
+            "Champú",
+            "Protector térmico",
+            "Mascarilla de brillo"
+          ]
+        },
+        "30-44": {
+          "headline": "Reparación con ligereza",
+          "copy": "Cuidado reparador, sérum antiencrespamiento y cuero cabelludo.",
+          "tags": [
+            "Reparación",
+            "Sérum",
+            "Cuero cabelludo"
+          ]
+        },
+        "45-59": {
+          "headline": "Un gesto nutritivo",
+          "copy": "Ampollas fortificantes, densidad y nutrición capilar.",
+          "tags": [
+            "Fortalecimiento",
+            "Densidad",
+            "Mascarilla nutritiva"
+          ]
+        },
+        "60+": {
+          "headline": "Suavidad para tonos plateados",
+          "copy": "Cuidado delicado para cabello canoso y plateado.",
+          "tags": [
+            "Cuidado suave",
+            "Cabello canoso",
+            "Tono plateado"
+          ]
+        },
+        "all": {
+          "headline": "Cuidado capilar en el salón",
+          "copy": "Descubre texturas, gestos profesionales y rituales de salón.",
+          "tags": [
+            "Salón",
+            "Texturas",
+            "Cuidado capilar"
+          ]
+        }
+      },
+      "clips": [
+        {
+          "id": "hc-01",
+          "title": "El ritual empieza en el lavado",
+          "subtitle": "Cuidado capilar · 15 s",
+          "tags": [
+            "champú",
+            "nutrición",
+            "cabello"
+          ],
+          "durationMs": 6000,
+          "video": ""
+        },
+        {
+          "id": "hc-02",
+          "title": "Brillo que se nota",
+          "subtitle": "Sérum y acabado · 12 s",
+          "tags": [
+            "sérum",
+            "brillo",
+            "reparación"
+          ],
+          "durationMs": 6000,
+          "video": ""
+        }
+      ]
+    },
+    {
+      "id": "newness",
+      "name": "Novedades",
+      "icon": "newness",
+      "family": "Lanzamientos",
+      "campaign": "Selección editorial",
+      "headline": "Lo nuevo en belleza",
+      "copy": "Descubre las novedades que merecen un lugar en tu ritual.",
+      "tags": [
+        "Edición destacada",
+        "Nuevo lanzamiento",
+        "Favorito de temporada"
+      ],
+      "tint": "#e6dfcf",
+      "deep": "#a1844e",
+      "video": {
+        "18-29": "assets/videos/age-recommendations/newness-18-29.mp4",
+        "30-44": "assets/videos/age-recommendations/newness-30-44.mp4",
+        "45-59": "assets/videos/age-recommendations/newness-45-59.mp4",
+        "60+": "assets/videos/age-recommendations/newness-60plus.mp4",
+        "all": "assets/videos/age-recommendations/newness-all.mp4"
+      },
+      "posterByAge": {
+        "18-29": "assets/videos/age-recommendations/newness-18-29.jpg",
+        "30-44": "assets/videos/age-recommendations/newness-30-44.jpg",
+        "45-59": "assets/videos/age-recommendations/newness-45-59.jpg",
+        "60+": "assets/videos/age-recommendations/newness-60plus.jpg",
+        "all": "assets/videos/age-recommendations/newness-all.jpg"
+      },
+      "ageContent": {
+        "18-29": {
+          "headline": "Novedades para probar",
+          "copy": "Gloss, cápsulas y texturas de edición limitada.",
+          "tags": [
+            "Tendencia",
+            "Gloss",
+            "Edición limitada"
+          ]
+        },
+        "30-44": {
+          "headline": "Nuevos gestos de cuidado",
+          "copy": "Sérum, contorno de ojos y protección para cada día.",
+          "tags": [
+            "Sérum",
+            "Contorno de ojos",
+            "Protección"
+          ]
+        },
+        "45-59": {
+          "headline": "Texturas ricas para descubrir",
+          "copy": "Cremas envolventes y sets especiales para regalar.",
+          "tags": [
+            "Crema rica",
+            "Textura",
+            "Set de regalo"
+          ]
+        },
+        "60+": {
+          "headline": "Confort para regalarte",
+          "copy": "Texturas reconfortantes y nuevos sets de regalo.",
+          "tags": [
+            "Confort",
+            "Textura",
+            "Set de regalo"
+          ]
+        },
+        "all": {
+          "headline": "Lo más nuevo en belleza",
+          "copy": "Descubre lanzamientos, texturas y favoritos de temporada.",
+          "tags": [
+            "Lanzamientos",
+            "Texturas",
+            "Más vendidos"
+          ]
+        }
+      },
+      "clips": [
+        {
+          "id": "nw-01",
+          "title": "Una novedad para descubrir",
+          "subtitle": "Lanzamiento destacado · 15 s",
+          "tags": [
+            "novedad",
+            "lanzamiento",
+            "campaña"
+          ],
+          "durationMs": 6000,
+          "video": ""
+        },
+        {
+          "id": "nw-02",
+          "title": "El favorito de la temporada",
+          "subtitle": "Selección editorial · 12 s",
+          "tags": [
+            "favorito",
+            "temporada",
+            "tendencia"
+          ],
+          "durationMs": 6000,
+          "video": ""
+        }
+      ]
+    },
+    {
+      "id": "haircolor",
+      "name": "Color de pelo",
+      "icon": "haircolor",
+      "family": "Coloración",
+      "campaign": "Color a tu manera",
+      "headline": "Encuentra tu próximo tono",
+      "copy": "Una paleta de posibilidades para expresar tu personalidad.",
+      "tags": [
+        "Rubios luminosos",
+        "Castaños ricos",
+        "Cobrizos expresivos"
+      ],
+      "tint": "#e3d5c4",
+      "deep": "#956c4b",
+      "video": {
+        "18-29": "assets/videos/age-recommendations/haircolor-18-29.mp4",
+        "30-44": "assets/videos/age-recommendations/haircolor-30-44.mp4",
+        "45-59": "assets/videos/age-recommendations/haircolor-45-59.mp4",
+        "60+": "assets/videos/age-recommendations/haircolor-60plus.mp4",
+        "all": "assets/videos/age-recommendations/haircolor-all.mp4"
+      },
+      "posterByAge": {
+        "18-29": "assets/videos/age-recommendations/haircolor-18-29.jpg",
+        "30-44": "assets/videos/age-recommendations/haircolor-30-44.jpg",
+        "45-59": "assets/videos/age-recommendations/haircolor-45-59.jpg",
+        "60+": "assets/videos/age-recommendations/haircolor-60plus.jpg",
+        "all": "assets/videos/age-recommendations/haircolor-all.jpg"
+      },
+      "ageContent": {
+        "18-29": {
+          "headline": "Explora tu próximo tono",
+          "copy": "Balayage, tonos pastel y color de fantasía.",
+          "tags": [
+            "Tonos pastel",
+            "Fantasía",
+            "Balayage"
+          ]
+        },
+        "30-44": {
+          "headline": "Luz en tonos cálidos",
+          "copy": "Mechas suaves y matices cálidos para un cambio sutil.",
+          "tags": [
+            "Mechas suaves",
+            "Tonos cálidos",
+            "Brillo"
+          ]
+        },
+        "45-59": {
+          "headline": "Color natural, brillo visible",
+          "copy": "Cobertura de canas y tonos naturales con brillo.",
+          "tags": [
+            "Cobertura de canas",
+            "Tonos naturales",
+            "Brillo"
+          ]
+        },
+        "60+": {
+          "headline": "Plata con luz propia",
+          "copy": "Tonos plata y platino para un acabado luminoso.",
+          "tags": [
+            "Plata",
+            "Platino",
+            "Luminosidad"
+          ]
+        },
+        "all": {
+          "headline": "Encuentra tu tono",
+          "copy": "Muestrario de tonos y técnicas de coloración en el salón.",
+          "tags": [
+            "Muestrario",
+            "Colorista",
+            "Coloración"
+          ]
+        }
+      },
+      "clips": [
+        {
+          "id": "cl-01",
+          "title": "Encuentra tu próximo tono",
+          "subtitle": "Coloración · 15 s",
+          "tags": [
+            "tono",
+            "coloración",
+            "cabello"
+          ],
+          "durationMs": 6000,
+          "video": ""
+        },
+        {
+          "id": "cl-02",
+          "title": "Una paleta, muchas versiones",
+          "subtitle": "Inspiración de color · 12 s",
+          "tags": [
+            "paleta",
+            "rubios",
+            "cobrizos"
+          ],
+          "durationMs": 6000,
+          "video": ""
+        }
+      ]
+    }
+  ],
+  "sensor": {
+    "id": "entry",
+    "name": "Sensor de entrada",
+    "headline": "La experiencia empieza aquí"
+  }
+}

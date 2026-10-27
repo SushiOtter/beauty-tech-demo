@@ -1,0 +1,47 @@
+@media (min-width: 1500px) { .app-shell { padding-left: 76px; padding-right: 76px; } }
+@media (max-width: 1100px) {
+  .station-configs { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .device-grid { gap: 13px; }
+  .control-panel { padding: 21px; }
+}
+@media (max-width: 760px) {
+  .app-shell { padding: 0 18px 28px; }
+  .topbar { min-height: 72px; }
+  .brand small, .live-indicator { display: none; }
+  .topbar-right { gap: 8px; }
+  .intro-row { padding: 40px 0 28px; align-items: flex-start; }
+  .intro-stat { display: none; }
+  .station-configs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .admin-footer, .section-heading, .public-header { align-items: flex-start; flex-direction: column; }
+  .age-recommendation-panel { grid-template-columns: 1fr; padding: 17px; }
+  .action-row { width: 100%; flex-wrap: wrap; }
+  .action-row .button { flex: 1; }
+  .device-grid, .public-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .device-screen { min-height: 160px; padding: 12px; }
+  .public-grid .device-screen { min-height: 180px; }
+  .device-title { font-size: 24px; }
+  .device-copy { font-size: 8px; }
+  .public-bottom { gap: 15px; line-height: 1.5; }
+}
+@media (max-width: 440px) {
+  .station-configs { grid-template-columns: 1fr; }
+  .device-grid, .public-grid { grid-template-columns: 1fr; }
+  .device-screen, .public-grid .device-screen { min-height: 205px; }
+  .button { padding: 0 13px; }
+  .action-row { flex-direction: column; }
+}
+
+@media (max-width: 760px) { .vision-panel { padding: 18px; } .quick-start-panel { align-items: stretch; flex-direction: column; padding: 18px; } .quick-start-actions { align-items: stretch; flex-direction: column; } .quick-start-actions .media-field { min-width: 0; } .quick-start-actions .button { width: 100%; white-space: normal; } .worker-view { min-height: calc(100vh - 100px); padding: 34px 8px; } .camera-flow-view { padding-top: 20px; padding-bottom: 20px; } .camera-flow-view .worker-copy { margin-bottom: 14px; } .camera-flow-view .privacy-card { margin-bottom: 12px; padding: 14px; } .camera-flow-view .worker-note { margin-top: 10px; } .worker-controls { grid-template-columns: 1fr; padding: 16px; } .worker-controls .button { width: 100%; } .demo-profile-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); } .vision-controls { align-items: stretch; flex-direction: column; } .vision-actions { width: 100%; } .vision-actions .button { flex: 1; } .vision-feedback { align-items: flex-start; flex-direction: column; } .camera-stage { width: min(100%, 320px); min-width: 0; flex: 0 0 auto; } .vision-status-wrap { width: 100%; min-width: 0; box-sizing: border-box; padding-left: 0; overflow-wrap: anywhere; } .vision-status-wrap p, .vision-status-wrap small { overflow-wrap: anywhere; } }
+@media (max-width: 760px) { body.presentation-mode .presentation-exit { top: 10px; right: 10px; min-height: 40px; padding: 0 14px; font-size: 10px; } }
+@media (max-width: 600px) {
+  .worker-flow-actions { width: 100%; flex-direction: column; }
+  .worker-flow-actions .button { width: 100%; }
+  .privacy-card { padding: 14px; }
+  body.presentation-mode .presentation-status { top: 10px; left: 10px; max-width: calc(100vw - 160px); padding: 8px 10px; font-size: 9px; }
+  body.presentation-mode #age-recommendation-panel:not([hidden]) { top: auto; right: 10px; bottom: 10px; left: 10px; grid-template-columns: 1fr; gap: 5px; width: calc(100vw - 20px); max-height: 48vh; padding: 12px; }
+  body.presentation-mode #age-recommendation-panel .age-range-control { grid-template-columns: minmax(0, 1fr) auto; align-items: end; }
+  body.presentation-mode #age-recommendation-panel .age-range-control label { grid-column: 1 / -1; }
+}
+@media (max-width: 760px) {
+  body.presentation-mode .public-grid .device-video { object-fit: cover; }
+}
