@@ -1,3 +1,18 @@
+.media-slots { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.media-admin-login {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-content: start;
+  gap: 10px 14px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(255,255,255,.36);
+}
+.media-admin-login p { grid-column: 1 / -1; margin: 0; color: var(--muted); font-size: 12px; }
+.media-admin-login label { display: grid; gap: 6px; color: var(--muted); font-size: 12px; }
+.media-admin-login input { width: 100%; padding: 10px 11px; border: 1px solid var(--line); border-radius: 9px; background: rgba(255,255,255,.65); color: var(--ink); }
+.media-admin-login button { justify-self: start; }
 .media-upload {
   display: grid;
   gap: 8px;
@@ -6,11 +21,11 @@
   border-radius: 14px;
   background: rgba(255,255,255,.36);
 }
-.media-admin-code { display: grid; max-width: 380px; gap: 7px; color: var(--muted); font-size: 12px; }
-.media-admin-code input { width: 100%; padding: 11px 12px; border: 1px solid var(--line); border-radius: 9px; background: rgba(255,255,255,.65); color: var(--ink); }
+.media-upload.is-disabled { opacity: .58; }
 .media-upload strong { color: var(--ink); }
 .media-upload span, .server-video small, .media-empty { color: var(--muted); font-size: 12px; }
 .media-upload input { width: 100%; margin-top: 6px; }
+.server-video-list { grid-column: 1 / -1; }
 .server-video-list { display: grid; gap: 8px; margin-top: 12px; }
 .server-video {
   display: grid;
@@ -66,6 +81,8 @@
 .kiosk-header .button-quiet { color: #fffaf3; }
 
 @media (max-width: 650px) {
+  .media-admin-login { grid-template-columns: 1fr; }
+  .media-admin-login p { grid-column: 1; }
   .server-video { grid-template-columns: 1fr auto; }
   .server-video a { grid-column: 1; }
   .server-video button { grid-column: 2; grid-row: 1 / span 2; }

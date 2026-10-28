@@ -118,7 +118,8 @@ class BeautyTechHandler(SimpleHTTPRequestHandler):
         self.send_header("Cross-Origin-Resource-Policy", "same-origin")
         self.send_header("Content-Security-Policy", (
             "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; "
-            "img-src 'self' data:; media-src 'self'; connect-src 'self'; font-src 'self'; "
+            "img-src 'self' data:; media-src 'self' https://*.supabase.co; "
+            "connect-src 'self' https://*.supabase.co; font-src 'self'; "
             "object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'"
         ))
         if getattr(self.server, "is_tls", False):

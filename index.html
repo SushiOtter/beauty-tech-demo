@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="css/responsive.css?v=33">
   <link rel="stylesheet" href="css/admin.css">
   <link rel="stylesheet" href="css/experience.css?v=41">
-  <link rel="stylesheet" href="css/kiosk.css?v=1">
+  <link rel="stylesheet" href="css/kiosk.css?v=2">
 </head>
 <body>
   <div class="ambient ambient-one" aria-hidden="true"></div>
@@ -141,17 +141,17 @@
 
       <section class="vision-panel media-panel" aria-labelledby="media-title">
         <div class="section-heading">
-          <div><p class="eyebrow">BIBLIOTECA CENTRAL DEL PC</p><h2 id="media-title">Vídeos por sección</h2></div>
-          <span class="subtle-label">Compartidos con las tablets de la red</span>
+        <div><p class="eyebrow">BIBLIOTECA ONLINE</p><h2 id="media-title">Vídeos por sección</h2></div>
+        <span class="subtle-label">Supabase · acceso para tablets</span>
         </div>
-        <p class="vision-copy">Sube varios vídeos a cada sección. Se guardan en el PC y las tablets los consultan desde esta biblioteca. MP4, WebM u Ogg · hasta 500 MB por archivo.</p>
+        <p class="vision-copy">Sube vídeos por sección a la biblioteca online de Supabase. Las tablets conectadas a Internet los consultan desde aquí. Inicia sesión para cargar o eliminar archivos; MP4, WebM u Ogg · hasta 50 MB por vídeo.</p>
         <div class="media-controls">
           <label class="media-field" for="media-station">Estación
             <select id="media-station" class="field-select"></select>
           </label>
           <div id="media-slots" class="media-slots"></div>
         </div>
-        <p id="media-status" class="media-status" role="status" aria-live="polite">Los vídeos que añadas se almacenan en el PC y estarán disponibles para las tablets.</p>
+        <p id="media-status" class="media-status" role="status" aria-live="polite">Conecta la biblioteca Supabase para consultar o administrar vídeos.</p>
       </section>
 
       <section class="control-panel" aria-labelledby="setup-title">
@@ -234,7 +234,7 @@
         <footer class="kiosk-footer">
           <div>
             <p id="kiosk-camera-status" role="status" aria-live="polite">Preparando el detector local…</p>
-            <small id="kiosk-library-status">Conectando con la biblioteca del PC…</small>
+            <small id="kiosk-library-status">Conectando con la biblioteca online…</small>
           </div>
           <p class="kiosk-privacy">Cámara local solo para detectar presencia · No se identifica a nadie ni se guardan imágenes</p>
           <button id="kiosk-manual-start" class="button button-secondary" type="button" hidden>Mostrar contenido sin cámara</button>
@@ -277,6 +277,6 @@
     <div id="station-player-content" class="station-player-content"></div>
   </div>
   <script src="js/bootstrap.js"></script>
-  <script type="module" src="js/main.js?v=41"></script>
+  <script type="module" src="js/main.js?v=42"></script>
 </body>
 </html>

@@ -1,6 +1,7 @@
 import { appState } from "./state.js";
 import { $ } from "./utils.js";
 import { startCamera, stopCamera } from "./camera.js?v=33";
+import { listVideos } from "./supabase.js";
 
 let activeStationId = "";
 let playlist = [];
@@ -38,10 +39,7 @@ function nextPlayableIndex(startIndex) {
 
 async function loadPlaylist(station) {
   try {
-    const response = await fetch(`/api/videos?section=${encodeURIComponent(station.id)}`);
-    const result = await response.json();
-    if (!response.ok) throw new Error(result.error || `Error del servidor (${response.status}).`);
-    playlist = result.videos.map(video => ({
+    playlist = (await listVideos(station.id)).map(video => ({
       name: video.name,
       url: video.url
     }));
@@ -57,8 +55,8 @@ async function loadPlaylist(station) {
     return playlist.length > 0;
   } catch (error) {
     console.error("No se pudo consultar la biblioteca de vídeos del PC:", error);
-    $("#kiosk-library-status").textContent = "No se pudo conectar con la biblioteca del PC.";
-    $("#kiosk-presence-prompt").textContent = "Comprueba la conexión con el servidor del PC";
+    $("#kiosk-library-status").textContent = "No se pudo conectar con la biblioteca de Supabase.";
+    $("#kiosk-presence-prompt").textContent = "Comprueba la conexión con la biblioteca online";
     playlist = [];
     return false;
   }
@@ -97,7 +95,7 @@ async function startKiosk(stationId) {
   document.body.classList.add("tablet-mode");
   const hasVideos = await loadPlaylist(station);
   if (!hasVideos) {
-    $("#kiosk-camera-status").textContent = "La tablet está en espera. Sube vídeos a esta sección desde el PC.";
+    $("#kiosk-camera-status").textContent = "La tablet está en espera. Añade vídeos a esta sección desde Administración.";
     return;
   }
   const startCameraTask = startCamera();

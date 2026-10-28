@@ -1,9 +1,19 @@
 import { appState } from "./state.js";
 import { $, escapeHTML } from "./utils.js";
 import { renderDevices } from "./panels.js?v=33";
+import { MAX_VIDEO_BYTES } from "./supabase-config.js";
+import {
+  deleteVideo,
+  hasAdminSession,
+  isSupabaseConfigured,
+  listVideos,
+  signInAdmin,
+  signOutAdmin,
+  uploadVideo
+} from "./supabase.js";
 
 let selectedStationId = "";
-let adminPin = "";
+let visibleVideos = [];
 
 function currentStation() {
   return appState.stations.get(selectedStationId) || [...appState.stations.values()][0] || null;
@@ -24,7 +34,7 @@ function renderVideoList(videos) {
     <article class="server-video">
       <div><strong>${escapeHTML(video.name)}</strong><small>${formatSize(video.size)}</small></div>
       <a href="${escapeHTML(video.url)}" target="_blank" rel="noopener noreferrer">Previsualizar</a>
-      <button class="button button-quiet" data-delete-video="${escapeHTML(video.id)}" type="button">Eliminar</button>
+      ${hasAdminSession() ? `<button class="button button-quiet" data-delete-video="${escapeHTML(video.id)}" type="button">Eliminar</button>` : ""}
     </article>`).join("");
 }
 
@@ -37,95 +47,108 @@ function setStationVideos(station, videos) {
   renderDevices();
 }
 
-async function requestJson(url, options = {}) {
-  const response = await fetch(url, options);
-  const payload = await response.json().catch(() => ({}));
-  if (!response.ok) {
-    if (response.status === 401) {
-      adminPin = "";
-      $("#media-admin-pin").value = "";
-    }
-    throw new Error(payload.error || `Error del servidor (${response.status}).`);
-  }
-  return payload;
-}
-
-function getAdminPin() {
-  adminPin = $("#media-admin-pin").value.trim();
-  if (!adminPin) {
-    $("#media-admin-pin").focus();
-    throw new Error("Introduce el código de administración que aparece en la ventana del servidor del PC.");
-  }
-  return adminPin;
+function updateAdminControls() {
+  const signedIn = hasAdminSession();
+  $("#media-login-form").hidden = signedIn;
+  $("#media-logout").hidden = !signedIn;
+  $("#media-upload-files").disabled = !signedIn;
+  $("#media-upload").classList.toggle("is-disabled", !signedIn);
+  renderVideoList(visibleVideos);
 }
 
 async function loadStationVideos() {
   const station = currentStation();
-  if (!station) return;
-  $("#media-status").textContent = `Cargando vídeos de ${station.name} desde el PC…`;
+  if (!station) return false;
+  if (!isSupabaseConfigured()) {
+    $("#media-list").innerHTML = "";
+    $("#media-status").textContent = "Configura la URL y la clave pública de Supabase en js/supabase-config.js para conectar la biblioteca.";
+    return false;
+  }
+  $("#media-status").textContent = `Cargando vídeos de ${station.name} desde Supabase…`;
   try {
-    const result = await requestJson(`/api/videos?section=${encodeURIComponent(station.id)}`);
-    renderVideoList(result.videos);
-    setStationVideos(station, result.videos);
-    $("#media-status").textContent = `${result.videos.length} vídeo(s) guardado(s) en este PC para ${station.name}.`;
+    const videos = await listVideos(station.id);
+    if (station.id !== selectedStationId) return false;
+    visibleVideos = videos;
+    renderVideoList(visibleVideos);
+    setStationVideos(station, visibleVideos);
+    $("#media-status").textContent = `${visibleVideos.length} vídeo(s) disponibles en Supabase para ${station.name}.`;
+    return true;
   } catch (error) {
+    if (station.id !== selectedStationId) return false;
+    visibleVideos = [];
     $("#media-list").innerHTML = "";
     $("#media-status").textContent = `No se pudieron cargar los vídeos: ${error.message}`;
+    return false;
+  }
+}
+
+async function handleSignIn(event) {
+  event.preventDefault();
+  const email = $("#media-admin-email").value.trim();
+  const password = $("#media-admin-password").value;
+  const button = $("#media-login");
+  button.disabled = true;
+  $("#media-status").textContent = "Iniciando sesión de administración…";
+  try {
+    await signInAdmin(email, password);
+    $("#media-admin-password").value = "";
+    updateAdminControls();
+    $("#media-status").textContent = "Sesión iniciada. Ya puedes añadir o eliminar vídeos.";
+  } catch (error) {
+    $("#media-status").textContent = `No se pudo iniciar sesión: ${error.message}`;
+  } finally {
+    button.disabled = false;
+  }
+}
+
+async function handleSignOut() {
+  const button = $("#media-logout");
+  button.disabled = true;
+  try {
+    await signOutAdmin();
+    updateAdminControls();
+    $("#media-status").textContent = "Sesión de administración cerrada.";
+  } catch (error) {
+    updateAdminControls();
+    $("#media-status").textContent = `No se pudo cerrar la sesión: ${error.message}`;
+  } finally {
+    button.disabled = false;
   }
 }
 
 async function uploadFiles(files) {
   const station = currentStation();
   if (!station || !files.length) return;
-  const pin = getAdminPin();
-  const supported = /\.(mp4|webm|ogv|ogg)$/i;
-  const rejected = [];
+  let uploaded = 0;
   for (let index = 0; index < files.length; index += 1) {
     const file = files[index];
-    if (!supported.test(file.name)) {
-      rejected.push(`${file.name}: formato no admitido`);
-      continue;
-    }
-    if (!file.size || file.size > 500 * 1024 * 1024) {
-      rejected.push(`${file.name}: tamaño fuera del límite de 500 MB`);
-      continue;
-    }
     $("#media-status").textContent = `Subiendo ${index + 1}/${files.length}: ${file.name}…`;
-    const url = new URL("/api/videos", location.origin);
-    url.searchParams.set("section", station.id);
-    url.searchParams.set("name", file.name);
     try {
-      await requestJson(url, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${pin}`,
-          "Content-Type": file.type || "application/octet-stream"
-        },
-        body: file
-      });
+      await uploadVideo(station.id, file);
+      uploaded += 1;
     } catch (error) {
-      if (error.message.includes("código de administración")) adminPin = "";
+      updateAdminControls();
       $("#media-status").textContent = `No se pudo subir ${file.name}: ${error.message}`;
       return;
     }
   }
-  await loadStationVideos();
-  $("#media-status").textContent = rejected.length
-    ? `Carga terminada. No se añadieron: ${rejected.join("; ")}.`
-    : `Vídeos de ${station.name} guardados en el PC. Ya están disponibles para las tablets.`;
+  if (!await loadStationVideos()) return;
+  $("#media-status").textContent = `${uploaded} vídeo(s) guardado(s) en Supabase para ${station.name}. Ya están disponibles para las tablets.`;
 }
 
-async function deleteVideo(videoId) {
-  const station = currentStation();
-  if (!station) return;
-  if (!window.confirm("¿Eliminar este vídeo del servidor del PC?")) return;
+async function handleDeleteVideo(videoId) {
+  const video = visibleVideos.find(item => item.id === videoId);
+  if (!video) {
+    $("#media-status").textContent = "No se encontró el vídeo seleccionado. Actualiza la lista e inténtalo de nuevo.";
+    return;
+  }
+  if (!window.confirm(`¿Eliminar "${video.name}" de la biblioteca de Supabase?`)) return;
   try {
-    await requestJson(`/api/videos/${encodeURIComponent(videoId)}`, {
-      method: "DELETE",
-      headers: { Authorization: `Bearer ${getAdminPin()}` }
-    });
-    await loadStationVideos();
+    await deleteVideo(video);
+    if (!await loadStationVideos()) return;
+    $("#media-status").textContent = `Se eliminó ${video.name} de la biblioteca.`;
   } catch (error) {
+    updateAdminControls();
     $("#media-status").textContent = `No se pudo eliminar el vídeo: ${error.message}`;
   }
 }
@@ -137,31 +160,39 @@ export function initializeMediaControls() {
     .map(station => `<option value="${escapeHTML(station.id)}">${escapeHTML(station.name)}</option>`)
     .join("");
   selectedStationId = select.value;
+  $("#media-slots").innerHTML = `
+    <form id="media-login-form" class="media-admin-login">
+      <p>Inicia sesión con la cuenta de administración de Supabase para gestionar la biblioteca.</p>
+      <label for="media-admin-email">Correo de administración
+        <input id="media-admin-email" type="email" autocomplete="username" required>
+      </label>
+      <label for="media-admin-password">Contraseña
+        <input id="media-admin-password" type="password" autocomplete="current-password" required>
+      </label>
+      <button id="media-login" class="button button-secondary" type="submit">Iniciar sesión</button>
+    </form>
+    <button id="media-logout" class="button button-quiet" type="button" hidden>Cerrar sesión</button>
+    <label id="media-upload" class="media-upload is-disabled" for="media-upload-files">
+      <strong>Añadir vídeos a esta sección</strong>
+      <span>Elige uno o varios archivos. MP4, WebM u Ogg · máximo ${Math.round(MAX_VIDEO_BYTES / (1024 * 1024))} MB por vídeo.</span>
+      <input id="media-upload-files" type="file" accept="video/mp4,video/webm,video/ogg,.mp4,.webm,.ogv,.ogg" multiple disabled>
+    </label>
+    <div id="media-list" class="server-video-list" aria-live="polite"></div>`;
+  updateAdminControls();
+  $("#media-login-form").addEventListener("submit", event => void handleSignIn(event));
+  $("#media-logout").addEventListener("click", () => void handleSignOut());
   select.addEventListener("change", () => {
     selectedStationId = select.value;
     void loadStationVideos();
   });
-  $("#media-slots").innerHTML = `
-    <label class="media-admin-code" for="media-admin-pin">
-      Código de administración (solo desde el PC del servidor)
-      <input id="media-admin-pin" type="password" autocomplete="off" inputmode="text" placeholder="Código mostrado en el PC">
-    </label>
-    <label class="media-upload" for="media-upload-files">
-      <strong>Añadir vídeos desde este PC a la sección</strong>
-      <span>Elige uno o varios archivos. MP4, WebM u Ogg · máximo 500 MB por vídeo.</span>
-      <input id="media-upload-files" type="file" accept="video/mp4,video/webm,video/ogg,.mp4,.webm,.ogv,.ogg" multiple>
-    </label>
-    <div id="media-list" class="server-video-list" aria-live="polite"></div>`;
   $("#media-upload-files").addEventListener("change", event => {
     const files = [...event.target.files];
     event.target.value = "";
-    void uploadFiles(files).catch(error => {
-      $("#media-status").textContent = error.message;
-    });
+    void uploadFiles(files);
   });
   $("#media-list").addEventListener("click", event => {
     const button = event.target.closest("[data-delete-video]");
-    if (button) void deleteVideo(button.dataset.deleteVideo);
+    if (button) void handleDeleteVideo(button.dataset.deleteVideo);
   });
   void loadStationVideos();
 }

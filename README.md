@@ -1,34 +1,40 @@
 # Beauty Tech Retail Experience
 
-**Versión 36.** Prototipo web de biblioteca central de vídeos por sección y reproducción por presencia.
+**Versión 37.** Web estática en GitHub Pages conectada a Supabase para gestionar y reproducir vídeos por sección.
 
-## Inicio rápido en Windows
+## Conectar la web publicada a Supabase
 
-1. Ejecuta `INICIAR-DEMO.bat`, o desde PowerShell: `py .\iniciar_demo.py`.
-2. Deja abierta la ventana del servidor. Abre en el PC la dirección local que muestra.
-3. En una tablet conectada a la misma Wi-Fi, abre la dirección de red que muestra el servidor. Si Windows Firewall pregunta, permite el acceso solo en la red privada de la tienda.
-4. En el PC, abre **Administración → Vídeos por sección**, elige una categoría, selecciona uno o varios vídeos y escribe el código de 32 caracteres que aparece en la consola.
-5. En cada tablet, el trabajador elige su sección y pulsa **Iniciar experiencia**. La cámara solicita permiso al navegador; al detectar presencia, la tablet consulta la biblioteca del PC y reproduce solo vídeos de esa sección. Al irse la persona, el reproductor se detiene y la tablet espera la siguiente; **Salir** detiene también la cámara.
+GitHub Pages publica la interfaz, pero no aloja una base de datos. Para la biblioteca online se usa Supabase: Postgres guarda el índice de los vídeos y Supabase Storage guarda los archivos. Este repositorio incluye el esquema y las políticas en [`supabase/setup.sql`](./supabase/setup.sql).
 
-Requiere Python 3.10 o posterior; no necesita Node ni paquetes externos. Los vídeos que suba la encargada se guardan en la base SQLite y la carpeta de medios dentro de `%LOCALAPPDATA%\BeautyTech` (Windows). Esa carpeta es el dato persistente que habría que respaldar o migrar si el prototipo se sustituye por otra base de datos. El código de administración aleatorio se renueva cada vez que se reinicia el servidor.
+1. Crea un proyecto en Supabase.
+2. En **SQL Editor**, pega y ejecuta el contenido de `supabase/setup.sql`. Crea la tabla `videos`, activa Row Level Security, añade sus políticas y crea el bucket público `beauty-videos` con límite de 50 MB.
+3. En **Authentication → Providers → Email**, desactiva el registro público. En **Authentication → Users**, crea la cuenta de la encargada. En SQL Editor, sustituye el correo de este comando por el de esa cuenta y ejecútalo para concederle permisos de administración:
 
-## Qué hace este prototipo
+   ```sql
+   update auth.users
+   set raw_app_meta_data = coalesce(raw_app_meta_data, '{}'::jsonb) || '{"beauty_admin": true}'::jsonb
+   where email = lower('correo-de-la-encargada@example.com');
+   ```
 
-- Incluye cinco secciones configurables: aparatología, maquillaje, cuidado del cabello, coloración y novedades.
-- El PC sirve de biblioteca central para todas las tablets que puedan alcanzar su dirección en la red local. Los archivos admitidos son MP4, WebM y Ogg, con un máximo de 500 MB por archivo.
-- Cada tablet puede elegir una sección de forma sencilla. Al detectar presencia, consulta otra vez la base de datos del PC y reproduce en orden los vídeos asignados; cuando la persona se aleja, detiene el vídeo y vuelve a la espera. Si aún no hay vídeos, espera sin activar la cámara.
-- Los cambios de nombre y otras preferencias visuales todavía se guardan en el navegador donde se hicieron; los archivos de vídeo sí se guardan en el PC.
-- La encargada administra desde el navegador del propio PC. Las cargas y eliminaciones requieren el código de administración, procedencia local y un origen coincidente; cinco códigos incorrectos bloquean nuevos intentos durante un minuto. Las tablets solo pueden consultar y reproducir los vídeos.
-- No se incluyen vídeos de muestra en `assets/videos`; todas las películas de las tablets deben subirse a su sección desde la web de administración.
+   La encargada debe cerrar e iniciar sesión después de asignar el rol. No publiques su contraseña.
+4. En la configuración/API del proyecto, copia la **Project URL** y la clave pública **anon** o **publishable** en `js/supabase-config.js`, en `SUPABASE_URL` y `SUPABASE_ANON_KEY`. Esa clave pública se entrega al navegador; **no** pongas nunca la clave `service_role` o una secret key en este repositorio.
+5. Guarda los cambios y súbelos a GitHub para que Pages publique la nueva versión. Abre `https://sushiotter.github.io/beauty-tech-demo/`, entra a **Administración → Vídeos por sección**, inicia sesión con la cuenta creada y prueba con un vídeo MP4, WebM u Ogg de menos de 50 MB.
+6. Para comprobar la tablet, abre la misma URL de Pages en un segundo dispositivo, selecciona la sección a la que subiste el vídeo y pulsa **Iniciar experiencia**. Si la cámara tiene permiso, el vídeo empieza al detectar presencia; si no, prueba el botón para mostrar contenido sin cámara.
 
-## Cámara, red y privacidad
+La URL y la clave anon son públicas por diseño: la seguridad depende de las políticas de `setup.sql` y de mantener desactivado el registro público. Los vídeos están en un bucket **público** para que las tablets puedan reproducirlos sin iniciar sesión; cualquiera que tenga la URL de un vídeo puede verlo. No subas contenido privado. Los vídeos ocupan cuota de almacenamiento y transferencia del plan de Supabase.
+
+## Uso de la biblioteca
+
+- Incluye cinco secciones: aparatología, maquillaje, tratamientos capilares, novedades y color de pelo.
+- La encargada puede subir y eliminar vídeos después de autenticarse con su cuenta de Supabase. Las tablets solo leen los vídeos de la sección que el trabajador haya seleccionado.
+- Si una sección no tiene vídeos, la tablet espera y no activa la cámara. Cuando se aleja la persona, el vídeo se detiene y el detector local vuelve a esperar.
+- La aplicación limita los archivos a 50 MB para que la prueba sea compatible con los límites habituales del plan gratuito. El plan de Supabase también puede imponer límites de tamaño, almacenamiento y transferencia.
+
+## Cámara y privacidad
 
 - El detector incluido solo localiza un rostro para determinar presencia. No estima edad, no identifica a la persona y no analiza rasgos. Los fotogramas se procesan en el navegador de la tablet y no se almacenan ni se envían al servidor.
-- La cámara se activa cuando el trabajador inicia la experiencia y concede permiso al navegador. La pantalla informa del detector local; si la cámara no funciona se ofrece reproducción manual. La cámara sigue activa entre clientes para detectar la siguiente presencia; solo se detiene al salir de la experiencia.
-- **Seguridad de red:** el servidor de demostración HTTP no cifra el tráfico de vídeo ni el código de página. Úsalo solo en una Wi-Fi privada de pruebas, no en redes públicas ni expuesto a Internet. Para tablets con cámara y uso real, configura un certificado HTTPS confiable para los dispositivos: define `BEAUTY_TECH_TLS_CERT` y `BEAUTY_TECH_TLS_KEY` antes de iniciar. La CA/certificado debe ser de confianza en las tablets e incluir `127.0.0.1` para la administración local y el nombre DNS de la tienda para las tablets; define también `BEAUTY_TECH_TABLET_URL` con esa URL HTTPS y haz que resuelva al PC.
-- Las cargas y eliminaciones se rechazan salvo que vengan del propio PC con origen web coincidente. El servidor aplica límite de intentos, restringe tipos de archivo y firmas básicas de contenedor, limita cada archivo a 500 MB y no permite descargar código Python, pruebas, Git ni listados de carpetas. Esto protege el prototipo en una LAN privada, pero no sustituye un despliegue revisado profesionalmente. Varias tiendas remotas requieren VPN/red corporativa, TLS y autenticación de empresa.
+- La cámara solicita permiso al iniciar la experiencia. GitHub Pages ya sirve HTTPS, requisito habitual para usar la cámara desde una tablet.
 - Antes de usarlo con clientes reales, revisa permisos de cámara, señalización visible, privacidad, seguridad y obligaciones legales con la responsable correspondiente.
-- El PC debe permanecer encendido y conectado para que las tablets puedan acceder a los vídeos. La carpeta `%LOCALAPPDATA%\BeautyTech` contiene la base de datos y los vídeos subidos; incluye esa carpeta en las copias de seguridad.
 
 ## Contenido de demostración y licencias
 
@@ -46,14 +52,14 @@ Se han retirado los vídeos incluidos como demostración. Las imágenes de póst
 | Cormorant Garamond | 5.3.0 | SIL OFL 1.1; licencia incluida | Paquete oficial `@fontsource/cormorant-garamond` en npm; `assets/fonts/cormorant-garamond-latin-*.woff2` | Fuente local para titulares; no depende del sistema. |
 | `sharp` (herramienta de generación opcional) | 0.35.5 | Apache-2.0 | Paquete oficial npm; solo lo usa `tools/generate-demo-videos.mjs` | Rasteriza las ilustraciones propias; no es necesario para ejecutar la demo. |
 | `ffmpeg-static` / FFmpeg (herramienta de generación opcional) | 5.3.0 / 6.1.1 | GPL-3.0-or-later | Paquete oficial npm; binario local solo para generar los MP4 | Codifica los vídeos H.264; no se distribuye ni se invoca durante la experiencia. |
-| Ilustraciones en reposo e iconos | CSS y SVG del proyecto | Originales del proyecto | `css/experience.css` y `assets/icons/`; sin descarga externa | Decoración visual; las tablets reproducen exclusivamente los vídeos subidos a la biblioteca del PC. |
+| Ilustraciones en reposo e iconos | CSS y SVG del proyecto | Originales del proyecto | `css/experience.css` y `assets/icons/`; sin descarga externa | Decoración visual; las tablets reproducen exclusivamente los vídeos subidos a Supabase. |
 
-La licencia MIT del paquete está en `vendor/face-api/LICENSE`; la licencia Apache-2.0 del componente TensorFlow.js incluido está en `vendor/face-api/TENSORFLOW-LICENSE`. El servidor local admite rangos HTTP para transmitir los vídeos subidos. No quedan vídeos de muestra en el proyecto.
+La licencia MIT del paquete está en `vendor/face-api/LICENSE`; la licencia Apache-2.0 del componente TensorFlow.js incluido está en `vendor/face-api/TENSORFLOW-LICENSE`. No quedan vídeos de muestra en el proyecto.
 
 ## Diagnóstico y pruebas
 
 - Si la cámara no inicia, comprueba el permiso del navegador y que haya una cámara conectada. Las tablets requieren HTTPS de confianza para la detección; **Mostrar contenido sin cámara** permite reproducir sin detección.
 - Si no carga el modelo local, comprueba que `vendor/face-api/` y `models/face-api/` estén incluidos en la carpeta.
-- Los modelos de presencia y vídeos incluidos no usan CDN. Los vídeos subidos se sirven desde el propio PC.
-- **Validación del flujo actual:** el navegador integrado verificó la carga de un vídeo MP4 desde la interfaz, su persistencia en la lista central y la reproducción en modo tablet. No había una cámara física disponible; por tanto, no se verificó la detección física ni una tablet Android.
-- **Pruebas automatizadas:** `python -m unittest discover -s tests -p test_server_api.py -v` verifica la autorización, carga, listado, transmisión por rangos y eliminación. `node --test tests\\age-content.test.js` conserva tres pruebas de contenido legado.
+- Los modelos de presencia se cargan localmente, sin CDN. Los vídeos publicados se sirven desde el bucket Storage de Supabase.
+- Para abrir una copia local puedes ejecutar `INICIAR-DEMO.bat`, pero la base de datos y el almacenamiento siguen estando en Supabase; también hay que completar `js/supabase-config.js`.
+- **Pruebas automatizadas:** `node --test tests\\age-content.test.js` conserva tres pruebas de contenido legado. Las pruebas `tests/test_server_api.py` corresponden al servidor local anterior.

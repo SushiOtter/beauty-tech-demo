@@ -1,2 +1,2 @@
-Beauty Tech v36
-Biblioteca central del PC y reproducción de tablet por presencia
+Beauty Tech v37
+Biblioteca Supabase y reproducción de tablet por presencia
