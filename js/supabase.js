@@ -159,7 +159,7 @@ export async function uploadVideo(sectionId, file) {
 
   const session = await activeSession();
   const safeName = file.name.replace(/[\\/\u0000-\u001f]/g, "_").slice(0, 160) || `video${extension}`;
-  const storagePath = `${sectionId}/${crypto.randomUUID()}-${safeName}`;
+  const storagePath = `${sectionId}/${crypto.randomUUID()}${extension}`;
   await request(`/storage/v1/object/${encodeURIComponent(SUPABASE_BUCKET)}/${storageObjectPath(storagePath)}`, {
     method: "POST",
     token: session.accessToken,
