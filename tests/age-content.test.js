@@ -21,13 +21,12 @@ test("age estimates map to the requested broad bands", () => {
   }
 });
 
-test("each of five stations defines content and media slots for all five profiles", async () => {
+test("each of five stations defines editorial content and posters for all five profiles", async () => {
   const data = JSON.parse(await readFile(new URL("../data/contenido.json", import.meta.url), "utf8"));
   assert.equal(data.stations.length, 5);
-  const videoPaths = new Set();
   for (const station of data.stations) {
     for (const key of profileKeys) {
-      assert.equal(typeof station.video[key], "string", `${station.id} video ${key}`);
+      assert.equal(station.video, undefined, `${station.id} has no bundled video`);
       assert.equal(typeof station.posterByAge[key], "string", `${station.id} poster ${key}`);
       assert.equal(typeof station.ageContent[key].headline, "string", `${station.id} headline ${key}`);
       assert.equal(station.ageContent[key].tags.length, 3, `${station.id} tags ${key}`);
@@ -36,21 +35,13 @@ test("each of five stations defines content and media slots for all five profile
         copy: station.ageContent[key].copy,
         products: station.ageContent[key].tags
       }, `${station.id} recommendations ${key}`);
-      const videoPath = station.video[key];
       const posterPath = station.posterByAge[key];
-      assert.match(videoPath, /^assets\/videos\/age-recommendations\/[a-z0-9-]+\.mp4$/);
       assert.match(posterPath, /^assets\/videos\/age-recommendations\/[a-z0-9-]+\.jpg$/);
-      assert.ok(!videoPaths.has(videoPath), `video reused for ${station.id} ${key}`);
-      videoPaths.add(videoPath);
-      const videoFile = new URL(`../${videoPath}`, import.meta.url);
       const posterFile = new URL(`../${posterPath}`, import.meta.url);
-      await access(videoFile);
       await access(posterFile);
-      assert.ok((await stat(videoFile)).size > 10_000, `${station.id} video ${key} is empty`);
       assert.ok((await stat(posterFile)).size > 5_000, `${station.id} poster ${key} is empty`);
     }
   }
-  assert.equal(videoPaths.size, 25);
 });
 
 test("all-ages suggestions are available and no exact age is exposed", () => {

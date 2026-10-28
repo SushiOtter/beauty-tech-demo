@@ -4,6 +4,7 @@ export const stationStates = Object.freeze({
 });
 export const appState = {
   mode: "admin", presentationMode: false, presentationStationId: "",
+  kioskMode: false,
   returnToWorker: true,
   demoProfile: null,
   ageGroup: "all",

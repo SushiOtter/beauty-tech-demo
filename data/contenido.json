@@ -21,13 +21,6 @@
       ],
       "tint": "#e7ddd0",
       "deep": "#8b7259",
-      "video": {
-        "18-29": "assets/videos/age-recommendations/apparatology-18-29.mp4",
-        "30-44": "assets/videos/age-recommendations/apparatology-30-44.mp4",
-        "45-59": "assets/videos/age-recommendations/apparatology-45-59.mp4",
-        "60+": "assets/videos/age-recommendations/apparatology-60plus.mp4",
-        "all": "assets/videos/age-recommendations/apparatology-all.mp4"
-      },
       "posterByAge": {
         "18-29": "assets/videos/age-recommendations/apparatology-18-29.jpg",
         "30-44": "assets/videos/age-recommendations/apparatology-30-44.jpg",
@@ -124,13 +117,6 @@
       ],
       "tint": "#ead7d3",
       "deep": "#a56e70",
-      "video": {
-        "18-29": "assets/videos/age-recommendations/makeup-18-29.mp4",
-        "30-44": "assets/videos/age-recommendations/makeup-30-44.mp4",
-        "45-59": "assets/videos/age-recommendations/makeup-45-59.mp4",
-        "60+": "assets/videos/age-recommendations/makeup-60plus.mp4",
-        "all": "assets/videos/age-recommendations/makeup-all.mp4"
-      },
       "posterByAge": {
         "18-29": "assets/videos/age-recommendations/makeup-18-29.jpg",
         "30-44": "assets/videos/age-recommendations/makeup-30-44.jpg",
@@ -227,13 +213,6 @@
       ],
       "tint": "#d9e0d5",
       "deep": "#71856d",
-      "video": {
-        "18-29": "assets/videos/age-recommendations/haircare-18-29.mp4",
-        "30-44": "assets/videos/age-recommendations/haircare-30-44.mp4",
-        "45-59": "assets/videos/age-recommendations/haircare-45-59.mp4",
-        "60+": "assets/videos/age-recommendations/haircare-60plus.mp4",
-        "all": "assets/videos/age-recommendations/haircare-all.mp4"
-      },
       "posterByAge": {
         "18-29": "assets/videos/age-recommendations/haircare-18-29.jpg",
         "30-44": "assets/videos/age-recommendations/haircare-30-44.jpg",
@@ -330,13 +309,6 @@
       ],
       "tint": "#e6dfcf",
       "deep": "#a1844e",
-      "video": {
-        "18-29": "assets/videos/age-recommendations/newness-18-29.mp4",
-        "30-44": "assets/videos/age-recommendations/newness-30-44.mp4",
-        "45-59": "assets/videos/age-recommendations/newness-45-59.mp4",
-        "60+": "assets/videos/age-recommendations/newness-60plus.mp4",
-        "all": "assets/videos/age-recommendations/newness-all.mp4"
-      },
       "posterByAge": {
         "18-29": "assets/videos/age-recommendations/newness-18-29.jpg",
         "30-44": "assets/videos/age-recommendations/newness-30-44.jpg",
@@ -433,13 +405,6 @@
       ],
       "tint": "#e3d5c4",
       "deep": "#956c4b",
-      "video": {
-        "18-29": "assets/videos/age-recommendations/haircolor-18-29.mp4",
-        "30-44": "assets/videos/age-recommendations/haircolor-30-44.mp4",
-        "45-59": "assets/videos/age-recommendations/haircolor-45-59.mp4",
-        "60+": "assets/videos/age-recommendations/haircolor-60plus.mp4",
-        "all": "assets/videos/age-recommendations/haircolor-all.mp4"
-      },
       "posterByAge": {
         "18-29": "assets/videos/age-recommendations/haircolor-18-29.jpg",
         "30-44": "assets/videos/age-recommendations/haircolor-30-44.jpg",

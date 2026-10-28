@@ -1,118 +1,60 @@
-"""Arranque robusto de Beauty Tech sin Node ni dependencias externas."""
-from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
-from pathlib import Path
-import os
-import socket
-import stat
-import threading
-import time
+"""Arranque de Beauty Tech en la red local, con almacenamiento persistente."""
+
+from threading import Timer
+from urllib.parse import urlsplit
 import webbrowser
+import os
 
-ROOT = Path(__file__).resolve().parent
-os.chdir(ROOT)
+from server_app import create_server, local_network_ip
 
-class QuietHandler(SimpleHTTPRequestHandler):
-    def send_head(self):
-        self._range_to_send = None
-        range_header = self.headers.get("Range")
-        if not range_header:
-            return super().send_head()
-
-        path = self.translate_path(self.path)
-        if os.path.isdir(path) or not os.path.isfile(path):
-            return super().send_head()
-
-        try:
-            file = open(path, "rb")
-        except OSError:
-            return super().send_head()
-
-        file_stat = os.fstat(file.fileno())
-        if not stat.S_ISREG(file_stat.st_mode):
-            file.close()
-            return super().send_head()
-
-        last_modified = self.date_time_string(file_stat.st_mtime)
-        if_range = self.headers.get("If-Range")
-        if if_range and if_range != last_modified:
-            file.close()
-            return super().send_head()
-
-        unit, separator, range_value = range_header.partition("=")
-        if separator != "=" or unit.strip().lower() != "bytes" or "," in range_value:
-            file.close()
-            return super().send_head()
-
-        try:
-            first, last = range_value.strip().split("-", 1)
-            if first:
-                start = int(first)
-                end = int(last) if last else file_stat.st_size - 1
-            else:
-                suffix_length = int(last)
-                if suffix_length <= 0:
-                    raise ValueError
-                start = max(0, file_stat.st_size - suffix_length)
-                end = file_stat.st_size - 1
-        except ValueError:
-            file.close()
-            return super().send_head()
-
-        if start < 0 or start >= file_stat.st_size or start > end:
-            file.close()
-            self.send_response(416)
-            self.send_header("Content-Range", f"bytes */{file_stat.st_size}")
-            self.send_header("Content-Length", "0")
-            self.end_headers()
-            return None
-
-        end = min(end, file_stat.st_size - 1)
-        self._range_to_send = (start, end)
-        self.send_response(206)
-        self.send_header("Content-type", self.guess_type(path))
-        self.send_header("Content-Range", f"bytes {start}-{end}/{file_stat.st_size}")
-        self.send_header("Content-Length", str(end - start + 1))
-        self.send_header("Last-Modified", last_modified)
-        self.send_header("Accept-Ranges", "bytes")
-        self.end_headers()
-        return file
-
-    def copyfile(self, source, outputfile):
-        byte_range = self._range_to_send
-        try:
-            if byte_range is None:
-                return super().copyfile(source, outputfile)
-
-            start, end = byte_range
-            source.seek(start)
-            remaining = end - start + 1
-            while remaining:
-                chunk = source.read(min(64 * 1024, remaining))
-                if not chunk:
-                    break
-                outputfile.write(chunk)
-                remaining -= len(chunk)
-        except (BrokenPipeError, ConnectionResetError, ConnectionAbortedError):
-            self.log_message("client closed the connection during file transfer")
-
-    def log_message(self, fmt, *args):
-        print("[HTTP] " + (fmt % args))
 
 try:
-    server = ThreadingHTTPServer(("127.0.0.1", 8000), QuietHandler)
-except OSError:
-    server = ThreadingHTTPServer(("127.0.0.1", 0), QuietHandler)
+    server, admin_pin = create_server()
+except (OSError, ValueError) as error:
+    raise SystemExit(
+        f"No se pudo iniciar Beauty Tech: {error}\n"
+        "Comprueba que el puerto 8000 esté libre y que el certificado HTTPS esté bien configurado."
+    ) from error
 
 port = server.server_address[1]
-url = f"http://127.0.0.1:{port}/"
-print("=" * 58)
-print(" BEAUTY TECH · DEMO LOCAL")
-print("=" * 58)
-print(f"Carpeta: {ROOT}")
-print(f"Abre:    {url}")
-print("Deja esta ventana abierta mientras utilizas la demo.")
-print("Para detener el servidor, pulsa Ctrl+C.\n")
-threading.Timer(0.8, lambda: webbrowser.open(url)).start()
+scheme = "https" if server.is_tls else "http"
+local_url = f"{scheme}://127.0.0.1:{port}/"
+network_url = f"{scheme}://{local_network_ip()}:{port}/"
+tablet_url = os.environ.get("BEAUTY_TECH_TABLET_URL", "").strip()
+if tablet_url:
+    parsed_tablet_url = urlsplit(tablet_url)
+    if (
+        parsed_tablet_url.scheme != scheme
+        or not parsed_tablet_url.netloc
+        or parsed_tablet_url.path not in ("", "/")
+        or parsed_tablet_url.query
+        or parsed_tablet_url.fragment
+        or parsed_tablet_url.username
+        or parsed_tablet_url.password
+    ):
+        server.server_close()
+        raise SystemExit(
+            "BEAUTY_TECH_TABLET_URL debe ser una URL de origen válida y usar "
+            f"{scheme.upper()} como el servidor."
+        )
+    network_url = tablet_url.rstrip("/") + "/"
+print("=" * 62)
+print(" BEAUTY TECH · SERVIDOR LOCAL DE TIENDA")
+print("=" * 62)
+print(f"En este PC:       {local_url}")
+print(f"En tablets Wi-Fi: {network_url}")
+if server.is_tls:
+    print("HTTPS activo con el certificado configurado.")
+elif os.environ.get("BEAUTY_TECH_TLS_CERT") or os.environ.get("BEAUTY_TECH_TLS_KEY"):
+    print("HTTPS no se pudo habilitar; revisa certificado y clave.")
+else:
+    print("AVISO: modo HTTP de demostración. La cámara en tablets requiere HTTPS.")
+print(f"Código admin:     {admin_pin}")
+print("Guarda el código: se renueva cada vez que se reinicia el servidor.")
+print("Los vídeos se guardan en la carpeta local de datos de Beauty Tech.")
+print("Mantén esta ventana abierta. Para detenerlo, pulsa Ctrl+C.\n")
+Timer(0.8, lambda: webbrowser.open(local_url)).start()
+
 try:
     server.serve_forever()
 except KeyboardInterrupt:

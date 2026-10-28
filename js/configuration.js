@@ -16,15 +16,14 @@ export function iconSVG(name) {
  return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${iconShapes[name] || iconShapes.newness}</svg>`;
 }
 export async function loadConfiguration() {
- const response = await fetch("./data/contenido.json?v=34");
+ const response = await fetch("./data/contenido.json?v=36");
  if (!response.ok) throw new Error("No se ha podido cargar data/contenido.json");
  const data = await response.json();
  if (!Array.isArray(data.stations) || data.stations.length !== 5) throw new Error("La configuración debe contener cinco estaciones comerciales.");
  const ageKeys = ["18-29", "30-44", "45-59", "60+", "all"];
- if (data.stations.some(station => !station.video || !ageKeys.every(key => typeof station.video[key] === "string")
-   || !station.posterByAge || !ageKeys.every(key => typeof station.posterByAge[key] === "string")
+ if (data.stations.some(station => !station.posterByAge || !ageKeys.every(key => typeof station.posterByAge[key] === "string")
    || !station.ageContent || !ageKeys.every(key => station.ageContent[key] && Array.isArray(station.ageContent[key].tags)))) {
-  throw new Error("Cada estación debe definir contenido, vídeo y póster para las cinco franjas.");
+  throw new Error("Cada estación debe definir contenido y póster para las cinco franjas.");
  }
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");

@@ -15,6 +15,7 @@
   <link rel="stylesheet" href="css/responsive.css?v=33">
   <link rel="stylesheet" href="css/admin.css">
   <link rel="stylesheet" href="css/experience.css?v=41">
+  <link rel="stylesheet" href="css/kiosk.css?v=1">
 </head>
 <body>
   <div class="ambient ambient-one" aria-hidden="true"></div>
@@ -41,14 +42,14 @@
         <div class="worker-main">
           <p class="eyebrow">BEAUTY TECH <span>·</span> PREPARACIÓN DE TABLET</p>
           <h1 id="worker-title">Una experiencia<br><em>hecha para ti.</em></h1>
-          <p class="worker-copy">Selecciona la sección de esta tablet. El vídeo dará la bienvenida y, solo con consentimiento, se mostrarán sugerencias relacionadas.</p>
+          <p class="worker-copy">Selecciona la sección de esta tablet e inicia la experiencia. La cámara solo detectará presencia para mostrar los vídeos de esa sección.</p>
           <div class="worker-controls">
             <label for="worker-station">SECCIÓN ASIGNADA
               <select id="worker-station" class="field-select"></select>
             </label>
             <button class="button button-primary" id="worker-start" type="button">Iniciar experiencia <span aria-hidden="true">→</span></button>
           </div>
-          <p class="worker-note"><span aria-hidden="true">◉</span> Cámara apagada hasta el consentimiento · Procesamiento local · Sin imágenes guardadas</p>
+          <p class="worker-note"><span aria-hidden="true">◉</span> La cámara se activa al iniciar · Detección local · Sin imágenes guardadas</p>
         </div>
         <aside class="worker-preview" aria-live="polite">
           <img id="worker-preview-poster" src="assets/videos/age-recommendations/apparatology-all.jpg" alt="">
@@ -66,12 +67,12 @@
     <section id="camera-consent-view" class="worker-view camera-flow-view" aria-labelledby="camera-consent-title" hidden>
       <p class="eyebrow">VÍDEO DE LA SECCIÓN · PRIVACIDAD</p>
       <h1 id="camera-consent-title">Descubre esta sección.<br><em>Tú decides.</em></h1>
-      <p class="worker-copy">Para adaptar las recomendaciones, la tablet necesita detectar un rostro y estimar una franja de edad aproximada. No calcula una edad exacta ni verifica la identidad.</p>
+      <p class="worker-copy">La cámara detecta únicamente presencia para iniciar los vídeos de esta sección. No identifica a las personas ni estima la edad.</p>
       <div class="privacy-card">
         <strong>Procesamiento local en este dispositivo</strong>
         <ul>
-          <li>La cámara solo se activa después de tu consentimiento; el rostro se procesa aquí y no se graba ni se guarda.</li>
-          <li>Al alejarte, se detiene la cámara y se elimina la lectura temporal de esta sesión.</li>
+          <li>La cámara se activa al iniciar la experiencia; el detector funciona aquí y no graba ni guarda imágenes.</li>
+          <li>Al alejarte, el vídeo se detiene; la cámara sigue activa mientras el trabajador mantenga la experiencia iniciada.</li>
           <li>Si no aceptas, puedes continuar sin cámara con contenido para todas las edades.</li>
         </ul>
       </div>
@@ -80,7 +81,7 @@
         <button class="button button-secondary" id="camera-consent-decline" type="button">Seguir sin cámara</button>
         <button class="button button-quiet" id="camera-consent-cancel" type="button">Volver</button>
       </div>
-      <p class="worker-note">La edad estimada puede equivocarse y no confirma la edad real. La edad no determina por sí sola las necesidades de cuidado.</p>
+      <p class="worker-note">La cámara no reconoce identidades ni estima datos personales.</p>
     </section>
 
     <section id="scan-view" class="scan-view" aria-label="Escaneo facial local" hidden>
@@ -119,16 +120,16 @@
         <div>
           <p class="eyebrow">CONTROL DE EXPERIENCIA · RETAIL</p>
           <h1 id="admin-title">Una experiencia <em>que responde.</em></h1>
-          <p class="intro-copy">Prepara las estaciones, asigna el contenido y deja que la instalación trabaje de forma autónoma.</p>
+          <p class="intro-copy">Organiza los vídeos por sección y deja preparadas las tablets para la tienda.</p>
         </div>
-        <div class="intro-stat"><span class="stat-number">06</span><span>DISPOSITIVOS<br>EN LA INSTALACIÓN</span></div>
+        <div class="intro-stat"><span class="stat-number">05</span><span>SECCIONES<br>DISPONIBLES</span></div>
       </div>
 
       <section class="quick-start-panel" aria-labelledby="quick-start-title">
         <div>
           <p class="eyebrow">MODO PRESENTACIÓN</p>
           <h2 id="quick-start-title">Activa una experiencia automática</h2>
-          <p>Elige la sección y pulsa iniciar. La tablet detectará la presencia y repetirá las recomendaciones hasta que la persona se aleje.</p>
+          <p>Elige la sección y pulsa iniciar. La tablet reproduce sus vídeos al detectar presencia y vuelve a la espera cuando la persona se aleja.</p>
         </div>
         <div class="quick-start-actions">
           <label class="media-field" for="camera-station">Sección
@@ -136,16 +137,21 @@
           </label>
           <button class="button button-primary" id="start-section-experience" type="button">Iniciar experiencia</button>
         </div>
-        <details class="demo-profile">
-          <summary>Perfil de ejemplo para probar la personalización</summary>
-          <p>Selecciona un escenario. La cámara solo detecta presencia; estos rasgos no se deducen de la imagen.</p>
-          <div class="demo-profile-fields">
-            <label for="demo-age-range">Rango orientativo<select id="demo-age-range" class="field-select"><option value="">Sin especificar</option><option value="18-29">18–29</option><option value="30-44">30–44</option><option value="45-59">45–59</option><option value="60+">60+</option><option value="all">Todas las edades</option></select></label>
-            <label for="demo-hair-texture">Textura<select id="demo-hair-texture" class="field-select"><option value="">Sin especificar</option><option value="curly">Rizado</option><option value="straight">Liso</option></select></label>
-            <label for="demo-hair-length">Longitud<select id="demo-hair-length" class="field-select"><option value="">Sin especificar</option><option value="short">Corto</option><option value="long">Largo</option></select></label>
-            <label for="demo-beard">Vello facial<select id="demo-beard" class="field-select"><option value="">Sin especificar</option><option value="beard">Con barba</option><option value="no-beard">Sin barba</option></select></label>
-          </div>
-        </details>
+      </section>
+
+      <section class="vision-panel media-panel" aria-labelledby="media-title">
+        <div class="section-heading">
+          <div><p class="eyebrow">BIBLIOTECA CENTRAL DEL PC</p><h2 id="media-title">Vídeos por sección</h2></div>
+          <span class="subtle-label">Compartidos con las tablets de la red</span>
+        </div>
+        <p class="vision-copy">Sube varios vídeos a cada sección. Se guardan en el PC y las tablets los consultan desde esta biblioteca. MP4, WebM u Ogg · hasta 500 MB por archivo.</p>
+        <div class="media-controls">
+          <label class="media-field" for="media-station">Estación
+            <select id="media-station" class="field-select"></select>
+          </label>
+          <div id="media-slots" class="media-slots"></div>
+        </div>
+        <p id="media-status" class="media-status" role="status" aria-live="polite">Los vídeos que añadas se almacenan en el PC y estarán disponibles para las tablets.</p>
       </section>
 
       <section class="control-panel" aria-labelledby="setup-title">
@@ -155,7 +161,7 @@
         </div>
         <div id="station-configs" class="station-configs"></div>
         <div class="admin-footer">
-          <div class="config-note"><span class="note-icon">✦</span><span><strong>Configuración local</strong><small>Los cambios y enlaces se guardan en este navegador. Los archivos solo duran esta sesión.</small></span></div>
+          <div class="config-note"><span class="note-icon">✦</span><span><strong>Biblioteca central del PC</strong><small>Los vídeos subidos se conservan en el servidor y se comparten con las tablets conectadas a la red.</small></span></div>
           <div class="action-row">
             <button class="button button-secondary" id="test-event" type="button">Probar recomendación</button>
             <label class="guided-interval" for="guided-interval">Segundos por estación<input id="guided-interval" type="number" min="12" max="45" step="0.5" value="14.5"></label>
@@ -167,10 +173,10 @@
 
       <section class="vision-panel" aria-labelledby="vision-title">
         <div class="section-heading">
-          <div><p class="eyebrow">DETECCIÓN LOCAL EXPERIMENTAL</p><h2 id="vision-title">Prueba con cámara</h2></div>
-          <span class="subtle-label">Procesamiento en este navegador</span>
+          <div><p class="eyebrow">CONFIGURACIÓN AVANZADA</p><h2 id="vision-title">Detección de presencia</h2></div>
+          <span class="subtle-label">Procesamiento en este dispositivo</span>
         </div>
-        <p class="vision-copy">El modelo local detecta rostros y estima una franja de edad orientativa. No identifica personas ni analiza el cabello. Los perfiles de ejemplo se introducen manualmente y no se deducen de la imagen.</p>
+        <p class="vision-copy">La cámara solo busca un rostro para detectar presencia y activar el vídeo de la sección. No se estima la edad, no se identifica a nadie y las imágenes no salen de la tablet.</p>
         <div class="zone-config" id="zone-config" aria-label="Asignación de zonas a estaciones">
           <p class="zone-config-title">Asigna cada zona de la cámara a una estación</p>
           <div class="zone-selects" id="zone-selects"></div>
@@ -181,30 +187,15 @@
             <button class="button button-secondary" id="camera-start" type="button">Activar cámara</button>
             <button class="button button-quiet" id="camera-stop" type="button" disabled>Detener cámara</button>
           </div>
-          <label class="confidence-control" for="camera-confidence">Confianza mínima <output id="camera-confidence-value" for="camera-confidence">20%</output><input id="camera-confidence" type="range" min="0.2" max="0.9" step="0.05" value="0.2"></label>
+          <label class="confidence-control" for="camera-confidence">Sensibilidad <output id="camera-confidence-value" for="camera-confidence">20%</output><input id="camera-confidence" type="range" min="0.2" max="0.9" step="0.05" value="0.2"></label>
         </div>
         <div class="vision-feedback">
           <div class="camera-stage">
             <video id="camera-preview" class="camera-preview" muted playsinline aria-label="Vista previa de la cámara"></video>
             <canvas id="camera-overlay" class="camera-overlay" aria-hidden="true"></canvas>
           </div>
-          <div class="vision-status-wrap"><span class="vision-status-dot" id="camera-status-dot"></span><p id="camera-status" role="status" aria-live="polite">Cámara apagada. No se está capturando imagen.</p><small id="camera-detail">La biblioteca y los pesos de detección y edad están incluidos en este proyecto. El análisis se ejecuta en este navegador; no se guardan ni se envían imágenes.</small><div class="vision-metrics" aria-live="polite"><span>Modelo: <strong id="metric-model">Sin iniciar</strong></span><span>Confianza: <strong id="metric-confidence">—</strong></span><span>Inferencia: <strong id="metric-latency">—</strong></span><span>Zona: <strong id="metric-zone">—</strong></span><span>Última detección: <strong id="metric-last-detection">—</strong></span></div></div>
+          <div class="vision-status-wrap"><span class="vision-status-dot" id="camera-status-dot"></span><p id="camera-status" role="status" aria-live="polite">Cámara apagada. No se está capturando imagen.</p><small id="camera-detail">El detector de presencia funciona en este navegador; no se guardan ni se envían imágenes.</small><div class="vision-metrics" aria-live="polite"><span>Modelo: <strong id="metric-model">Sin iniciar</strong></span><span>Confianza: <strong id="metric-confidence">—</strong></span><span>Inferencia: <strong id="metric-latency">—</strong></span><span>Zona: <strong id="metric-zone">—</strong></span><span>Última detección: <strong id="metric-last-detection">—</strong></span></div></div>
         </div>
-      </section>
-
-      <section class="vision-panel media-panel" aria-labelledby="media-title">
-        <div class="section-heading">
-          <div><p class="eyebrow">CONTENIDO DE LAS ESTACIONES</p><h2 id="media-title">Vídeos de demostración</h2></div>
-          <span class="subtle-label">Archivos locales o enlaces</span>
-        </div>
-        <p class="vision-copy">Hay 25 vídeos originales locales, uno por estación y franja de edad. Puedes añadir seis clips manuales por sección con permiso de uso. Usa MP4, WebM u Ogg; un enlace externo es opcional y necesita internet.</p>
-        <div class="media-controls">
-          <label class="media-field" for="media-station">Estación
-            <select id="media-station" class="field-select"></select>
-          </label>
-          <div id="media-slots" class="media-slots"></div>
-        </div>
-        <p id="media-status" class="media-status" role="status" aria-live="polite">Los vídeos locales se seleccionan automáticamente según la estación y la franja. Puedes añadir otros clips autorizados sin eliminar los vídeos incluidos.</p>
       </section>
 
       <section class="preview-section" aria-labelledby="preview-title">
@@ -214,7 +205,7 @@
         </div>
         <div id="device-grid" class="device-grid"></div>
       </section>
-      <p class="footnote">PROTOTIPO · Estimación orientativa de rango de edad y presencia en navegador · Sin reconocimiento de identidad ni detección de mirada.</p>
+      <p class="footnote">PROTOTIPO · Detección local de presencia · Sin estimación de edad ni reconocimiento de identidad.</p>
     </section>
 
     <section id="public-view" class="public-view" hidden aria-label="Modo público de las estaciones">
@@ -222,6 +213,33 @@
         <div><p class="eyebrow">BEAUTY TECH · EXPERIENCIA EN TIENDA</p><h1><span id="presentation-heading">Descubre tu próximo</span> <em id="presentation-heading-accent">ritual.</em></h1></div>
         <div class="public-header-actions"><div class="public-status"><i></i> <span id="public-mode-label">ESPERA DE PRESENCIA</span></div><button class="button button-secondary" id="guided-stop" type="button" hidden>Detener demostración</button></div>
       </div>
+      <section id="tablet-kiosk" class="tablet-kiosk" aria-label="Experiencia de la tablet" hidden>
+        <video id="kiosk-camera-preview" class="kiosk-camera-preview" muted playsinline aria-hidden="true"></video>
+        <header class="kiosk-header">
+          <span class="brand-mark">B<span>T</span></span>
+          <span class="kiosk-live"><i></i> EXPERIENCIA EN TIENDA</span>
+          <button id="kiosk-stop" class="button button-quiet" type="button">Salir</button>
+        </header>
+        <div class="kiosk-stage">
+          <div id="kiosk-attract" class="kiosk-attract">
+            <p class="eyebrow">DESCUBRE ESTA SECCIÓN</p>
+            <h1 id="kiosk-category"></h1>
+            <p id="kiosk-copy"></p>
+            <span id="kiosk-presence-prompt" class="kiosk-prompt">Acércate para ver nuestros productos</span>
+          </div>
+          <div id="kiosk-player" class="kiosk-player" hidden>
+            <video id="kiosk-video" muted playsinline autoplay aria-label="Vídeos de la sección"></video>
+          </div>
+        </div>
+        <footer class="kiosk-footer">
+          <div>
+            <p id="kiosk-camera-status" role="status" aria-live="polite">Preparando el detector local…</p>
+            <small id="kiosk-library-status">Conectando con la biblioteca del PC…</small>
+          </div>
+          <p class="kiosk-privacy">Cámara local solo para detectar presencia · No se identifica a nadie ni se guardan imágenes</p>
+          <button id="kiosk-manual-start" class="button button-secondary" type="button" hidden>Mostrar contenido sin cámara</button>
+        </footer>
+      </section>
       <section id="age-recommendation-panel" class="age-recommendation-panel" aria-live="polite" hidden>
         <div>
           <p class="eyebrow">SELECCIÓN ORIENTATIVA</p>
@@ -258,10 +276,7 @@
     <button class="station-player-dismiss" type="button" aria-label="Cerrar reproductor">×</button>
     <div id="station-player-content" class="station-player-content"></div>
   </div>
-  <!-- La detección funciona con los recursos de IA incluidos en el proyecto. -->
-  <script>
-    if (location.protocol === "file:") document.getElementById("boot-warning").hidden = false;
-  </script>
-  <script type="module" src="js/main.js?v=40"></script>
+  <script src="js/bootstrap.js"></script>
+  <script type="module" src="js/main.js?v=41"></script>
 </body>
 </html>

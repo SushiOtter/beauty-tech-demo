@@ -46,25 +46,9 @@ function startSelectedExperience(stationId) {
  if (!stationId) return announce("Activa al menos una sección antes de iniciar la experiencia.");
  if (!station?.enabled) return announce("Elige una sección activa.");
  pendingStationId = station.id;
- returnAfterConsent = !$("#worker-view").hidden;
- appState.demoProfile = {
-   ageRange: $("#demo-age-range")?.value || "",
-   hairTexture: $("#demo-hair-texture")?.value || "",
-   hairLength: $("#demo-hair-length")?.value || "",
-   beard: $("#demo-beard")?.value || ""
- };
- setPublicMode(true, station.id);
- $("#presentation-heading").textContent = station.name;
- $("#presentation-heading-accent").textContent = "a tu manera.";
- $("#public-mode-label").textContent = "VÍDEO · ESPERANDO CONSENTIMIENTO";
- $("#kiosk-welcome-station").textContent = station.name;
- $("#presentation-status").textContent = "El vídeo está en reproducción. La cámara espera el consentimiento del cliente.";
- $("#worker-view").hidden = true;
- $("#admin-view").hidden = true;
- $("#camera-error-view").hidden = true;
- $("#camera-consent-view").hidden = false;
- $("#admin-lock").hidden = true;
- $("#camera-consent-accept")?.focus();
+ window.dispatchEvent(new CustomEvent("beautytech:kiosk-start-requested", {
+   detail: { stationId: station.id }
+ }));
 }
 async function startConsentedExperience() {
  const acceptButton = $("#camera-consent-accept");
@@ -483,7 +467,7 @@ export function initializeAdmin() {
  // No se muestran botones ni controles al visitante en modo público.
  window.addEventListener("keydown", event => {
    if (!event.ctrlKey || !event.altKey || !/^[1-5]$/.test(event.key)) return;
-   if (appState.mode !== "public") return;
+   if (appState.mode !== "public" || appState.kioskMode) return;
    event.preventDefault();
    const station = [...appState.stations.values()][Number(event.key) - 1];
    if (!station || !station.enabled) return announce("Esa estación está desactivada.");
@@ -494,6 +478,10 @@ export function initializeAdmin() {
  });
  $("#admin-lock").addEventListener("click", () => {
    if (appState.mode === "public") {
+     if (appState.kioskMode) {
+       window.dispatchEvent(new CustomEvent("beautytech:kiosk-stop-requested"));
+       return;
+     }
      stopCamera();
      appState.returnToWorker = false;
      setPublicMode(false);
@@ -506,12 +494,18 @@ export function initializeAdmin() {
    $("#admin-lock").textContent = showAdmin ? "Modo trabajador ↗" : "Administración ↗";
  });
  $("#presentation-exit")?.addEventListener("click", () => {
+   if (appState.kioskMode) {
+     window.dispatchEvent(new CustomEvent("beautytech:kiosk-stop-requested"));
+     return;
+   }
    stopCamera();
    appState.returnToWorker = true;
    setPublicMode(false);
  });
  window.addEventListener("keydown", event => {
-   if (event.key === "Escape" && appState.presentationMode) {
+   if (event.key === "Escape" && appState.kioskMode) {
+     window.dispatchEvent(new CustomEvent("beautytech:kiosk-stop-requested"));
+   } else if (event.key === "Escape" && appState.presentationMode) {
      stopCamera();
      appState.returnToWorker = true;
      setPublicMode(false);
@@ -519,6 +513,7 @@ export function initializeAdmin() {
  });
 }
 export function setPublicMode(enabled, presentationStationId = "") {
+ appState.kioskMode = false;
  if (!enabled) {
   stopGuidedDemo();
   $("#scan-view").hidden = true;

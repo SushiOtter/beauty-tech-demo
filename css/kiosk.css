@@ -1,0 +1,75 @@
+.media-upload {
+  display: grid;
+  gap: 8px;
+  padding: 18px;
+  border: 1px dashed var(--line);
+  border-radius: 14px;
+  background: rgba(255,255,255,.36);
+}
+.media-admin-code { display: grid; max-width: 380px; gap: 7px; color: var(--muted); font-size: 12px; }
+.media-admin-code input { width: 100%; padding: 11px 12px; border: 1px solid var(--line); border-radius: 9px; background: rgba(255,255,255,.65); color: var(--ink); }
+.media-upload strong { color: var(--ink); }
+.media-upload span, .server-video small, .media-empty { color: var(--muted); font-size: 12px; }
+.media-upload input { width: 100%; margin-top: 6px; }
+.server-video-list { display: grid; gap: 8px; margin-top: 12px; }
+.server-video {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(255,255,255,.5);
+}
+.server-video > div { display: grid; gap: 4px; min-width: 0; }
+.server-video strong { overflow-wrap: anywhere; font-size: 13px; }
+.server-video a { color: var(--success); font-size: 12px; }
+.media-empty { margin: 14px 0 0; }
+
+.tablet-mode { overflow: hidden; }
+.tablet-mode .app-shell { width: 100%; max-width: none; margin: 0; padding: 0; }
+.tablet-mode .topbar,
+.tablet-mode .ambient,
+.tablet-mode .grain { display: none; }
+.tablet-mode #public-view { position: fixed; inset: 0; z-index: 20; display: block; overflow: auto; margin: 0; padding: 0; background: #1b1816; }
+.tablet-mode #public-view > :not(#tablet-kiosk) { display: none !important; }
+.tablet-kiosk {
+  --kiosk-gold: #d3b88f;
+  position: relative;
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  overflow: hidden;
+  padding: clamp(20px, 4vw, 56px);
+  color: #fffaf3;
+  background: radial-gradient(ellipse at 68% 32%, #514337 0%, #27221e 47%, #171513 100%);
+}
+.kiosk-camera-preview { position: fixed; top: 0; left: 0; width: 1px; height: 1px; opacity: .01; pointer-events: none; }
+.kiosk-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.kiosk-header .brand-mark { display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid rgba(255,250,243,.36); border-radius: 50%; font-family: var(--font-display, serif); font-size: 21px; }
+.kiosk-header .brand-mark span { color: var(--kiosk-gold); }
+.kiosk-live { display: flex; align-items: center; gap: 9px; color: rgba(255,250,243,.7); font-size: 10px; letter-spacing: .16em; }
+.kiosk-live i { width: 7px; height: 7px; border-radius: 50%; background: #8eb6a1; box-shadow: 0 0 12px #8eb6a1; }
+.kiosk-stage { display: grid; flex: 1; min-height: 0; place-items: center; padding: 28px 0; }
+.kiosk-attract { max-width: 780px; text-align: center; animation: fade-up .45s ease both; }
+.kiosk-attract .eyebrow { color: var(--kiosk-gold); letter-spacing: .2em; }
+.kiosk-attract h1 { margin: 12px 0; font-family: var(--font-display, Georgia, serif); font-size: clamp(42px, 8vw, 88px); font-weight: 400; }
+.kiosk-attract > p:not(.eyebrow) { max-width: 600px; margin: 0 auto; color: rgba(255,250,243,.72); font-size: clamp(16px, 2vw, 22px); line-height: 1.5; }
+.kiosk-prompt { display: inline-flex; margin-top: 38px; padding: 13px 20px; border: 1px solid rgba(211,184,143,.55); border-radius: 999px; color: var(--kiosk-gold); font-size: 13px; letter-spacing: .04em; }
+.kiosk-player { width: min(100%, 1120px); height: min(68vh, 720px); animation: fade-up .35s ease both; }
+.kiosk-player video { width: 100%; height: 100%; border-radius: 18px; object-fit: contain; background: #090807; box-shadow: 0 24px 80px rgba(0,0,0,.4); }
+.kiosk-footer { display: flex; align-items: end; justify-content: space-between; gap: 20px; color: rgba(255,250,243,.76); }
+.kiosk-footer p { margin: 0 0 5px; font-size: 13px; }
+.kiosk-footer small { color: rgba(255,250,243,.48); font-size: 11px; }
+.kiosk-privacy { max-width: 420px; text-align: right; font-size: 11px !important; line-height: 1.5; }
+.kiosk-header .button-quiet { color: #fffaf3; }
+
+@media (max-width: 650px) {
+  .server-video { grid-template-columns: 1fr auto; }
+  .server-video a { grid-column: 1; }
+  .server-video button { grid-column: 2; grid-row: 1 / span 2; }
+  .kiosk-footer { align-items: flex-start; flex-direction: column; }
+  .kiosk-privacy { text-align: left; }
+  .kiosk-player { height: min(60vh, 520px); }
+}

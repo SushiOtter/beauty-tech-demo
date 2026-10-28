@@ -1,7 +1,7 @@
 import { appState } from "./state.js";
 import { emitEvent } from "./events.js";
 import { $, escapeHTML } from "./utils.js";
-import { detectFace, estimateAgeRange, loadFaceDetector } from "./age.js";
+import { detectFace, loadFaceDetector } from "./age.js";
 
 let stream = null, video = null, canvas = null, context = null;
 let faceModelReady = false, faceModelPromise = null;
@@ -27,6 +27,8 @@ function status(message, active = false) {
   }
   const presentationStatus = $("#presentation-status");
   if (presentationStatus && appState.presentationMode) presentationStatus.textContent = message;
+  const kioskStatus = $("#kiosk-camera-status");
+  if (kioskStatus && appState.kioskMode) kioskStatus.textContent = message;
   $("#camera-status-dot")?.classList.toggle("is-active", active);
 }
 function metric(id, value) { const el = $(id); if (el) el.textContent = value; }
@@ -129,11 +131,11 @@ export function resetCameraPreferences() {
 export async function startCamera() {
   if (stream) return true;
   const token = ++startToken;
-  video = appState.mode === "public" ? $("#scan-camera-preview") : $("#camera-preview");
-  canvas = appState.mode === "public" ? $("#scan-camera-overlay") : $("#camera-overlay");
+  video = appState.kioskMode ? $("#kiosk-camera-preview") : appState.mode === "public" ? $("#scan-camera-preview") : $("#camera-preview");
+  canvas = appState.kioskMode ? null : appState.mode === "public" ? $("#scan-camera-overlay") : $("#camera-overlay");
   context = canvas?.getContext("2d") || null;
-  if (!navigator.mediaDevices?.getUserMedia) {
-    status("Este navegador no permite usar la cámara. Abre la demo en Chrome o Edge desde localhost."); return false;
+  if (!window.isSecureContext || !navigator.mediaDevices?.getUserMedia) {
+    status("La cámara requiere un origen seguro. En tablets abre la dirección HTTPS de la tienda; HTTP solo funciona en localhost."); return false;
   }
   setControls(true); status("Solicitando permiso de cámara…");
   metric("#metric-model", "Cargando"); metric("#metric-confidence", "—"); metric("#metric-latency", "—"); metric("#metric-zone", "—"); metric("#metric-last-detection", "—");
@@ -196,7 +198,9 @@ async function detectPresence() {
   return detectFace(video);
 }
 function resetPresence() {
-  if (personPresent && triggeredThisPresence && latestZone >= 0) {
+  if (appState.kioskMode && personPresent) {
+    window.dispatchEvent(new CustomEvent("beautytech:presence-lost"));
+  } else if (personPresent && triggeredThisPresence && latestZone >= 0) {
     const stationId = activeTargetStationId || zoneAssignments[latestZone];
     if (stationId && appState.mode === "public") emitEvent("lost-attention", stationId, { source: "camera-presence-ended" });
   }
@@ -254,6 +258,15 @@ function scanFrame(now, token) {
 async function onSustainedPresence({ confidence, areaRatio, dwellMs, zone, station, kind, token }) {
   const now = performance.now();
   if (!station) { status(`Zona ${zone + 1} sin estación asignada.`, true); triggeredThisPresence = true; return; }
+  if (appState.kioskMode) {
+    if (!station.enabled) { status(`${station.name} está desactivada.`, true); triggeredThisPresence = true; return; }
+    triggeredThisPresence = true;
+    window.dispatchEvent(new CustomEvent("beautytech:presence-detected", {
+      detail: { stationId: station.id, confidence, dwellMs }
+    }));
+    status(`Presencia detectada. Mostrando contenido de ${station.name}.`, true);
+    return;
+  }
   if (appState.mode !== "public") {
     if (now - lastAdminNoticeAt > 3500) { status(`${kind === "face" ? "Rostro" : "Persona"} detectado. Inicia el modo público para activar la estación automáticamente.`, true); lastAdminNoticeAt = now; }
     return;
@@ -263,22 +276,6 @@ async function onSustainedPresence({ confidence, areaRatio, dwellMs, zone, stati
   emitEvent("entry");
   emitEvent("attention", station.id, { proximity: Math.min(0.95, 0.45 + areaRatio * 2.5), dwellMs, orientation: null, confidence, zone: zone + 1, source: "face-api-local-detection" });
   status(`Presencia detectada por IA. Activando ${station.name}.`, true);
-  if (kind === "face") {
-    void estimateAgeRange(video).then(result => {
-      if (!stream || token !== startToken || appState.mode !== "public" || !personPresent || activeTargetStationId !== station.id) return;
-      metric("#metric-model", "Rostro + edad local");
-      window.dispatchEvent(new CustomEvent("beautytech:age-estimated", {
-        detail: { stationId: station.id, ageGroup: result.range, source: "camera", reason: result.reason, sampleCount: result.sampleCount }
-      }));
-    }).catch(error => {
-      if (!stream || token !== startToken) return;
-      console.error("No se pudo estimar el rango de edad:", error);
-      status("No se pudo estimar la edad; continúan las recomendaciones generales.", true);
-      window.dispatchEvent(new CustomEvent("beautytech:age-estimated", {
-        detail: { stationId: station.id, ageGroup: "all", source: "camera", reason: "estimation-error", sampleCount: 0 }
-      }));
-    });
-  }
 }
 export function stopCamera(updateStatus = true, preservePublicSession = false) {
   startToken += 1; if (rafId) cancelAnimationFrame(rafId); rafId = 0;
