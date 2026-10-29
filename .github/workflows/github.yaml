@@ -22,9 +22,23 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # ... aquí van tus pasos para construir la página (npm run build, etc.) ...
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload site artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          name: github-pages
+          path: |
+            index.html
+            assets/
+            css/
+            data/
+            js/
+            models/
+            vendor/
 
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v5
         with:
-          artifact_name: github-pagesSS
+          artifact_name: github-pages
