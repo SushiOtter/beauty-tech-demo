@@ -3,7 +3,7 @@ import {
   SUPABASE_ANON_KEY,
   SUPABASE_BUCKET,
   SUPABASE_URL
-} from "./supabase-config.js";
+} from "./supabase-config.js?v=38";
 
 const MIME_TYPES = {
   ".mp4": "video/mp4",

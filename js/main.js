@@ -5,8 +5,8 @@ import { initializeEventEngine } from "./events.js?v=33";
 import { initializeAdmin } from "./admin.js?v=42";
 import { detectionCapabilities } from "./detection.js";
 import { $ } from "./utils.js";
-import { initializeMediaControls } from "./media.js?v=37";
-import { initializeKiosk } from "./kiosk.js?v=7";
+import { initializeMediaControls } from "./media.js?v=38";
+import { initializeKiosk } from "./kiosk.js?v=8";
 import { preloadCameraDetector } from "./camera.js?v=36";
 
 async function boot() {

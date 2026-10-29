@@ -1,18 +1,24 @@
 create table if not exists public.videos (
   id uuid primary key default gen_random_uuid(),
-  section_id text not null check (section_id in (
-    'apparatology',
-    'makeup',
-    'haircare',
-    'newness',
-    'haircolor'
-  )),
+  section_id text not null,
   name text not null check (char_length(name) between 1 and 200),
   storage_path text not null unique,
   mime_type text not null check (mime_type in ('video/mp4', 'video/webm', 'video/ogg')),
   size_bytes bigint not null check (size_bytes between 1 and 52428800),
   created_at timestamptz not null default now()
 );
+
+alter table public.videos drop constraint if exists videos_section_id_check;
+alter table public.videos drop constraint if exists videos_section_id_allowed;
+alter table public.videos
+  add constraint videos_section_id_allowed check (section_id in (
+    'apparatology',
+    'makeup',
+    'haircare',
+    'newness',
+    'haircolor',
+    'global'
+  ));
 
 create index if not exists videos_section_created_idx
   on public.videos (section_id, created_at);

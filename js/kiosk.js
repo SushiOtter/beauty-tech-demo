@@ -2,6 +2,7 @@ import { appState } from "./state.js";
 import { $ } from "./utils.js";
 import { startCamera, stopCamera } from "./camera.js?v=36";
 import { listVideos } from "./supabase.js";
+import { GLOBAL_VIDEO_SECTION_ID } from "./supabase-config.js?v=38";
 
 let activeStationId = "";
 let playlist = [];
@@ -9,11 +10,14 @@ let playlistCursor = 0;
 let activeVideoIndex = -1;
 let presenceActive = false;
 let failedVideoIndexes = new Set();
+let idlePlaylist = [];
 
 function playAttractVideo() {
   const video = $("#kiosk-attract-video");
-  if (!playlist.length) return;
-  video.src = playlist[0].url;
+  const idleVideo = idlePlaylist[0] || playlist[0];
+  if (!idleVideo) return;
+  video.src = idleVideo.url;
+  video.loop = true;
   video.load();
   video.play().catch(error => {
     console.warn("No se pudo reproducir el vídeo de espera de la tablet:", error);
@@ -98,6 +102,18 @@ async function loadPlaylist(station) {
   }
 }
 
+async function loadIdleVideo() {
+  try {
+    idlePlaylist = await listVideos(GLOBAL_VIDEO_SECTION_ID);
+    return idlePlaylist.length > 0;
+  } catch (error) {
+    console.error("No se pudo consultar el vídeo de espera global:", error);
+    idlePlaylist = [];
+    $("#kiosk-library-status").textContent = "No se pudo cargar el vídeo de espera global; se usará el vídeo de esta sección si está disponible.";
+    return false;
+  }
+}
+
 async function startKiosk(stationId) {
   const station = appState.stations.get(stationId);
   if (!station?.enabled) {
@@ -130,17 +146,20 @@ async function startKiosk(stationId) {
   $("#kiosk-manual-start").hidden = true;
   document.body.classList.add("tablet-mode");
   const hasVideos = await loadPlaylist(station);
+  const hasIdleVideo = await loadIdleVideo();
   if (!appState.kioskMode || activeStationId !== stationId) return;
   playAttractVideo();
-  if (!hasVideos) {
-    $("#kiosk-camera-status").textContent = "La tablet está en espera. Añade vídeos a esta sección desde Administración.";
+  if (!hasVideos && !hasIdleVideo) {
+    $("#kiosk-camera-status").textContent = "La tablet está en espera. Añade un vídeo de espera global o vídeos a esta sección desde Administración.";
     return;
   }
   const cameraReady = await startCamera();
   if (!appState.kioskMode || activeStationId !== stationId) return;
-  if (!cameraReady) {
+  if (!cameraReady && hasVideos) {
     $("#kiosk-manual-start").hidden = false;
     $("#kiosk-manual-start").focus();
+  } else if (!cameraReady) {
+    $("#kiosk-camera-status").textContent = "El vídeo de espera sigue reproduciéndose, pero no se pudo activar la detección de presencia.";
   }
 }
 
@@ -164,12 +183,17 @@ function stopKiosk() {
   appState.presentationStationId = "";
   activeStationId = "";
   playlist = [];
+  idlePlaylist = [];
   failedVideoIndexes = new Set();
   $("#worker-start")?.focus();
 }
 
 function beginPresence() {
   if (!appState.kioskMode || !activeStationId || presenceActive) return;
+  if (!playlist.length) {
+    $("#kiosk-camera-status").textContent = "Presencia detectada, pero esta sección todavía no tiene vídeos disponibles.";
+    return;
+  }
   presenceActive = true;
   playlistCursor = 0;
   activeVideoIndex = -1;

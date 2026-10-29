@@ -1,13 +1,13 @@
 # Beauty Tech Retail Experience
 
-**Versión 37.** Web estática en GitHub Pages conectada a Supabase para gestionar y reproducir vídeos por sección.
+**Versión 38.** Web estática en GitHub Pages conectada a Supabase para gestionar y reproducir vídeos por sección.
 
 ## Conectar la web publicada a Supabase
 
 GitHub Pages publica la interfaz, pero no aloja una base de datos. Para la biblioteca online se usa Supabase: Postgres guarda el índice de los vídeos y Supabase Storage guarda los archivos. Este repositorio incluye el esquema y las políticas en [`supabase/setup.sql`](./supabase/setup.sql).
 
 1. Crea un proyecto en Supabase.
-2. En **SQL Editor**, pega y ejecuta el contenido de `supabase/setup.sql`. Crea la tabla `videos`, activa Row Level Security, añade sus políticas y crea el bucket público `beauty-videos` con límite de 50 MB.
+2. En **SQL Editor**, pega y ejecuta el contenido de `supabase/setup.sql`. Crea o actualiza la tabla `videos`, añade la sección especial `global` para el vídeo de espera, activa Row Level Security, añade sus políticas y crea el bucket público `beauty-videos` con límite de 50 MB.
 3. En **Authentication → Providers → Email**, desactiva el registro público. En **Authentication → Users**, crea la cuenta de la encargada. En SQL Editor, sustituye el correo de este comando por el de esa cuenta y ejecútalo para concederle permisos de administración:
 
    ```sql
@@ -18,7 +18,7 @@ GitHub Pages publica la interfaz, pero no aloja una base de datos. Para la bibli
 
    La encargada debe cerrar e iniciar sesión después de asignar el rol. No publiques su contraseña.
 4. En la configuración/API del proyecto, copia la **Project URL** y la clave pública **anon** o **publishable** en `js/supabase-config.js`, en `SUPABASE_URL` y `SUPABASE_ANON_KEY`. Esa clave pública se entrega al navegador; **no** pongas nunca la clave `service_role` o una secret key en este repositorio.
-5. Guarda los cambios y súbelos a GitHub para que Pages publique la nueva versión. Abre `https://sushiotter.github.io/beauty-tech-demo/`, entra a **Administración → Vídeos por sección**, inicia sesión con la cuenta creada y prueba con un vídeo MP4, WebM u Ogg de menos de 50 MB.
+5. Guarda los cambios y súbelos a GitHub para que Pages publique la nueva versión. Abre `https://sushiotter.github.io/beauty-tech-demo/`, entra a **Administración → Vídeos por sección**, inicia sesión con la cuenta creada y selecciona **Vídeo de espera · todas las secciones** para subir el vídeo de fondo. Para cambiarlo, elimina el actual y sube otro. Prueba con un vídeo MP4, WebM u Ogg de menos de 50 MB.
 6. Para comprobar la tablet, abre la misma URL de Pages en un segundo dispositivo, selecciona la sección a la que subiste el vídeo y pulsa **Iniciar experiencia**. Si la cámara tiene permiso, el vídeo empieza al detectar presencia; si no, prueba el botón para mostrar contenido sin cámara.
 
 La URL y la clave anon son públicas por diseño: la seguridad depende de las políticas de `setup.sql` y de mantener desactivado el registro público. Los vídeos están en un bucket **público** para que las tablets puedan reproducirlos sin iniciar sesión; cualquiera que tenga la URL de un vídeo puede verlo. No subas contenido privado. Los vídeos ocupan cuota de almacenamiento y transferencia del plan de Supabase.
@@ -26,8 +26,8 @@ La URL y la clave anon son públicas por diseño: la seguridad depende de las po
 ## Uso de la biblioteca
 
 - Incluye cinco secciones: aparatología, maquillaje, tratamientos capilares, novedades y color de pelo.
-- La encargada puede subir y eliminar vídeos después de autenticarse con su cuenta de Supabase. Las tablets solo leen los vídeos de la sección que el trabajador haya seleccionado.
-- Si una sección no tiene vídeos, la tablet espera y no activa la cámara. Al detectar un rostro, reproduce los vídeos de la sección mientras haya presencia; al alejarse la persona, detiene el vídeo y espera al siguiente cliente. La detección permanece activa durante toda la experiencia.
+- La encargada puede subir y eliminar vídeos después de autenticarse con su cuenta de Supabase. Las tablets usan el vídeo de espera global mientras no detectan presencia y reproducen los vídeos de la sección seleccionada al detectar a alguien.
+- Si una sección no tiene vídeos pero sí hay vídeo de espera global, la tablet lo reproduce y mantiene activa la detección; al detectar presencia, avisa que faltan vídeos para esa sección. Si no hay ninguno de los dos, no activa la cámara. Cuando hay vídeos de sección, los reproduce al detectar presencia y vuelve al vídeo global tras 15 segundos sin detección.
 - La aplicación limita los archivos a 50 MB para que la prueba sea compatible con los límites habituales del plan gratuito. El plan de Supabase también puede imponer límites de tamaño, almacenamiento y transferencia.
 
 ## Cámara y privacidad

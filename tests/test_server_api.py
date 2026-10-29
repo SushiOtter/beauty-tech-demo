@@ -119,6 +119,26 @@ class MediaApiTests(unittest.TestCase):
         )
         self.assertEqual(status, 415)
 
+    def test_global_wait_video_can_be_uploaded_and_listed(self):
+        video_bytes = b"\x00\x00\x00\x18ftypisomvideo-data"
+        headers = {
+            "Authorization": f"Bearer {self.admin_pin}",
+            "Content-Type": "video/mp4",
+            "Origin": self.origin,
+        }
+        status, _, body = self.request(
+            "/api/videos?section=global&name=espera.mp4",
+            method="POST",
+            body=video_bytes,
+            headers=headers,
+        )
+        self.assertEqual(status, 201)
+        video = json.loads(body)["video"]
+
+        status, _, body = self.request("/api/videos?section=global")
+        self.assertEqual(status, 200)
+        self.assertEqual(json.loads(body)["videos"][0]["id"], video["id"])
+
     def test_write_requests_require_local_origin_and_rate_limit_bad_pins(self):
         path = "/api/videos?section=makeup&name=look.mp4"
         status, _, _ = self.request(

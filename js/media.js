@@ -1,7 +1,7 @@
 import { appState } from "./state.js";
 import { $, escapeHTML } from "./utils.js";
 import { renderDevices } from "./panels.js?v=33";
-import { MAX_VIDEO_BYTES } from "./supabase-config.js";
+import { GLOBAL_VIDEO_SECTION_ID, MAX_VIDEO_BYTES } from "./supabase-config.js?v=38";
 import {
   deleteVideo,
   hasAdminSession,
@@ -16,7 +16,14 @@ let selectedStationId = "";
 let visibleVideos = [];
 
 function currentStation() {
+  if (selectedStationId === GLOBAL_VIDEO_SECTION_ID) return null;
   return appState.stations.get(selectedStationId) || [...appState.stations.values()][0] || null;
+}
+
+function selectedLabel() {
+  return selectedStationId === GLOBAL_VIDEO_SECTION_ID
+    ? "el vídeo de espera global"
+    : currentStation()?.name || "esta sección";
 }
 
 function formatSize(bytes) {
@@ -27,7 +34,9 @@ function formatSize(bytes) {
 function renderVideoList(videos) {
   const host = $("#media-list");
   if (!videos.length) {
-    host.innerHTML = '<p class="media-empty">Aún no hay vídeos en esta sección.</p>';
+    host.innerHTML = selectedStationId === GLOBAL_VIDEO_SECTION_ID
+      ? '<p class="media-empty">Aún no hay vídeo de espera global.</p>'
+      : '<p class="media-empty">Aún no hay vídeos en esta sección.</p>';
     return;
   }
   host.innerHTML = videos.map(video => `
@@ -51,33 +60,46 @@ function updateAdminControls() {
   const signedIn = hasAdminSession();
   $("#media-login-form").hidden = signedIn;
   $("#media-logout").hidden = !signedIn;
-  $("#media-upload-files").disabled = !signedIn;
-  $("#media-upload").classList.toggle("is-disabled", !signedIn);
+  const isGlobalVideo = selectedStationId === GLOBAL_VIDEO_SECTION_ID;
+  $("#media-upload-files").disabled = !signedIn || (isGlobalVideo && visibleVideos.length > 0);
+  $("#media-upload-files").multiple = !isGlobalVideo;
+  $("#media-upload").classList.toggle(
+    "is-disabled",
+    !signedIn || (isGlobalVideo && visibleVideos.length > 0)
+  );
+  $("#media-upload-title").textContent = isGlobalVideo
+    ? "Añadir vídeo de espera para todas las secciones"
+    : "Añadir vídeos a esta sección";
+  $("#media-upload-copy").textContent = isGlobalVideo
+    ? `Se reproduce en bucle mientras no se detecta presencia. Para cambiarlo, elimina el actual y sube otro. MP4, WebM u Ogg · máximo ${Math.round(MAX_VIDEO_BYTES / (1024 * 1024))} MB.`
+    : `Elige uno o varios archivos. MP4, WebM u Ogg · máximo ${Math.round(MAX_VIDEO_BYTES / (1024 * 1024))} MB por vídeo.`;
   renderVideoList(visibleVideos);
 }
 
-async function loadStationVideos() {
+async function loadSelectedVideos() {
   const station = currentStation();
-  if (!station) return false;
+  const sectionId = selectedStationId;
+  if (!station && sectionId !== GLOBAL_VIDEO_SECTION_ID) return false;
+  const label = selectedLabel();
   if (!isSupabaseConfigured()) {
     $("#media-list").innerHTML = "";
     $("#media-status").textContent = "Configura la URL y la clave pública de Supabase en js/supabase-config.js para conectar la biblioteca.";
     return false;
   }
-  $("#media-status").textContent = `Cargando vídeos de ${station.name} desde Supabase…`;
+  $("#media-status").textContent = `Cargando vídeos de ${label} desde Supabase…`;
   try {
-    const videos = await listVideos(station.id);
-    if (station.id !== selectedStationId) return false;
+    const videos = await listVideos(sectionId);
+    if (sectionId !== selectedStationId) return false;
     visibleVideos = videos;
-    renderVideoList(visibleVideos);
-    setStationVideos(station, visibleVideos);
-    $("#media-status").textContent = `${visibleVideos.length} vídeo(s) disponibles en Supabase para ${station.name}.`;
+    if (station) setStationVideos(station, visibleVideos);
+    updateAdminControls();
+    $("#media-status").textContent = `${visibleVideos.length} vídeo(s) disponibles en Supabase para ${label}.`;
     return true;
   } catch (error) {
-    if (station.id !== selectedStationId) return false;
+    if (sectionId !== selectedStationId) return false;
     visibleVideos = [];
     $("#media-list").innerHTML = "";
-    $("#media-status").textContent = `No se pudieron cargar los vídeos: ${error.message}`;
+    $("#media-status").textContent = `No se pudieron cargar los vídeos de ${label}: ${error.message}`;
     return false;
   }
 }
@@ -118,13 +140,19 @@ async function handleSignOut() {
 
 async function uploadFiles(files) {
   const station = currentStation();
-  if (!station || !files.length) return;
+  if ((!station && selectedStationId !== GLOBAL_VIDEO_SECTION_ID) || !files.length) return;
+  if (selectedStationId === GLOBAL_VIDEO_SECTION_ID && visibleVideos.length) {
+    $("#media-status").textContent = "Elimina el vídeo de espera actual antes de subir otro.";
+    return;
+  }
+  const sectionId = selectedStationId;
+  const label = selectedLabel();
   let uploaded = 0;
   for (let index = 0; index < files.length; index += 1) {
     const file = files[index];
     $("#media-status").textContent = `Subiendo ${index + 1}/${files.length}: ${file.name}…`;
     try {
-      await uploadVideo(station.id, file);
+      await uploadVideo(sectionId, file);
       uploaded += 1;
     } catch (error) {
       updateAdminControls();
@@ -132,8 +160,8 @@ async function uploadFiles(files) {
       return;
     }
   }
-  if (!await loadStationVideos()) return;
-  $("#media-status").textContent = `${uploaded} vídeo(s) guardado(s) en Supabase para ${station.name}. Ya están disponibles para las tablets.`;
+  if (!await loadSelectedVideos()) return;
+  $("#media-status").textContent = `${uploaded} vídeo(s) guardado(s) en Supabase para ${label}. Ya está disponible para las tablets.`;
 }
 
 async function handleDeleteVideo(videoId) {
@@ -144,9 +172,10 @@ async function handleDeleteVideo(videoId) {
   }
   if (!window.confirm(`¿Eliminar "${video.name}" de la biblioteca de Supabase?`)) return;
   try {
+    const label = selectedLabel();
     await deleteVideo(video);
-    if (!await loadStationVideos()) return;
-    $("#media-status").textContent = `Se eliminó ${video.name} de la biblioteca.`;
+    if (!await loadSelectedVideos()) return;
+    $("#media-status").textContent = `Se eliminó ${video.name} de ${label}.`;
   } catch (error) {
     updateAdminControls();
     $("#media-status").textContent = `No se pudo eliminar el vídeo: ${error.message}`;
@@ -158,7 +187,7 @@ export function initializeMediaControls() {
   if (!select) return;
   select.innerHTML = [...appState.stations.values()]
     .map(station => `<option value="${escapeHTML(station.id)}">${escapeHTML(station.name)}</option>`)
-    .join("");
+    .join("") + `<option value="${GLOBAL_VIDEO_SECTION_ID}">Vídeo de espera · todas las secciones</option>`;
   selectedStationId = select.value;
   $("#media-slots").innerHTML = `
     <form id="media-login-form" class="media-admin-login">
@@ -173,8 +202,8 @@ export function initializeMediaControls() {
     </form>
     <button id="media-logout" class="button button-quiet" type="button" hidden>Cerrar sesión</button>
     <label id="media-upload" class="media-upload is-disabled" for="media-upload-files">
-      <strong>Añadir vídeos a esta sección</strong>
-      <span>Elige uno o varios archivos. MP4, WebM u Ogg · máximo ${Math.round(MAX_VIDEO_BYTES / (1024 * 1024))} MB por vídeo.</span>
+      <strong id="media-upload-title">Añadir vídeos a esta sección</strong>
+      <span id="media-upload-copy">Elige uno o varios archivos. MP4, WebM u Ogg · máximo ${Math.round(MAX_VIDEO_BYTES / (1024 * 1024))} MB por vídeo.</span>
       <input id="media-upload-files" type="file" accept="video/mp4,video/webm,video/ogg,.mp4,.webm,.ogv,.ogg" multiple disabled>
     </label>
     <div id="media-list" class="server-video-list" aria-live="polite"></div>`;
@@ -183,7 +212,9 @@ export function initializeMediaControls() {
   $("#media-logout").addEventListener("click", () => void handleSignOut());
   select.addEventListener("change", () => {
     selectedStationId = select.value;
-    void loadStationVideos();
+    visibleVideos = [];
+    updateAdminControls();
+    void loadSelectedVideos();
   });
   $("#media-upload-files").addEventListener("change", event => {
     const files = [...event.target.files];
@@ -194,5 +225,5 @@ export function initializeMediaControls() {
     const button = event.target.closest("[data-delete-video]");
     if (button) void handleDeleteVideo(button.dataset.deleteVideo);
   });
-  void loadStationVideos();
+  void loadSelectedVideos();
 }

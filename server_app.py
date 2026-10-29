@@ -23,6 +23,7 @@ import uuid
 
 ROOT = Path(__file__).resolve().parent
 MAX_UPLOAD_BYTES = 500 * 1024 * 1024
+GLOBAL_VIDEO_SECTION_ID = "global"
 ALLOWED_EXTENSIONS = {
     ".mp4": "video/mp4",
     ".webm": "video/webm",
@@ -77,7 +78,7 @@ def initialize_store(data_dir: Path) -> None:
 def load_section_ids(root: Path) -> set[str]:
     with (root / "data" / "contenido.json").open(encoding="utf-8") as file:
         data = json.load(file)
-    return {
+    return {GLOBAL_VIDEO_SECTION_ID} | {
         station["id"]
         for station in data.get("stations", [])
         if isinstance(station.get("id"), str)
