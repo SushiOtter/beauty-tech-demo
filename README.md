@@ -34,6 +34,7 @@ La URL y la clave anon son públicas por diseño: la seguridad depende de las po
 
 - El detector incluido solo localiza un rostro para determinar presencia. No estima edad, no identifica a la persona y no analiza rasgos. Los fotogramas se procesan en el navegador de la tablet y no se almacenan ni se envían al servidor.
 - La cámara solicita permiso al iniciar la experiencia. GitHub Pages ya sirve HTTPS, requisito habitual para usar la cámara desde una tablet.
+- Para reducir la espera de la primera detección, el modelo local se carga y prepara al abrir la aplicación; esto no activa la cámara. En modo tablet, el vídeo comienza tras 250 ms de presencia detectada.
 - Antes de usarlo con clientes reales, revisa permisos de cámara, señalización visible, privacidad, seguridad y obligaciones legales con la responsable correspondiente.
 
 ## Contenido de demostración y licencias

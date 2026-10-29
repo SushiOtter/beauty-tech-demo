@@ -1,7 +1,7 @@
 import { appState } from "./state.js";
 import { emitEvent } from "./events.js";
 import { $, escapeHTML } from "./utils.js";
-import { detectFace, loadFaceDetector } from "./age.js?v=34";
+import { detectFace, warmPresenceDetector } from "./age.js?v=35";
 
 let stream = null, video = null, canvas = null, context = null;
 let faceModelReady = false, faceModelPromise = null;
@@ -13,7 +13,7 @@ let activeTargetStationId = "";
 const MIN_FACE_CONFIDENCE = 0.22;
 const MIN_FACE_AREA = 0.0008;
 const INFERENCE_INTERVAL_MS = 120;
-const KIOSK_PRESENCE_DWELL_MS = 500;
+const KIOSK_PRESENCE_DWELL_MS = 250;
 const ZONE_COUNT = 5;
 const ZONE_STORAGE_KEY = "beauty-tech-camera-zones-v1";
 const CONFIDENCE_STORAGE_KEY = "beauty-tech-camera-confidence-v1";
@@ -42,7 +42,7 @@ async function ensureModels(onProgress) {
   if (!faceModelPromise) {
     faceModelPromise = (async () => {
       onProgress("Cargando detector facial local…");
-      await loadFaceDetector();
+      await warmPresenceDetector();
       faceModelReady = true;
       metric("#metric-model", "Rostro local");
     })().catch(error => {
@@ -51,6 +51,11 @@ async function ensureModels(onProgress) {
     });
   }
   return faceModelPromise;
+}
+export function preloadCameraDetector() {
+  void ensureModels(() => {}).catch(error => {
+    console.warn("No se pudo preparar el detector de cámara; se volverá a intentar al iniciar la experiencia.", error);
+  });
 }
 function buildZoneSelectors() {
   const root = $("#zone-selects"); if (!root) return;

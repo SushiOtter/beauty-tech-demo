@@ -2,7 +2,7 @@ import { appState } from "./state.js";
 import { $, announce, escapeHTML } from "./utils.js";
 import { renderDevices } from "./panels.js?v=33";
 import { emitEvent, resetStation, resetStations } from "./events.js?v=33";
-import { initializeCameraControls, resetCameraPreferences, startCamera, stopCamera } from "./camera.js?v=34";
+import { initializeCameraControls, resetCameraPreferences, startCamera, stopCamera } from "./camera.js?v=35";
 import { clearSavedConfiguration, loadConfiguration, renderConfigs, saveConfiguration } from "./configuration.js?v=34";
 import { ageProfiles, getAgeProfile, getStationRecommendations } from "./products.js?v=33";
 

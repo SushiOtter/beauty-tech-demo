@@ -9,6 +9,7 @@ let libraryPromise = null;
 let detectorPromise = null;
 let modelsPromise = null;
 let backendPromise = null;
+let presenceWarmupPromise = null;
 
 async function selectInferenceBackend(faceapi) {
   const tf = faceapi.tf;
@@ -98,6 +99,23 @@ export async function detectFace(video) {
     score: detection.score,
     kind: "face"
   };
+}
+
+export async function warmPresenceDetector() {
+  const faceapi = await loadFaceDetector();
+  if (!presenceWarmupPromise) {
+    const canvas = document.createElement("canvas");
+    canvas.width = PRESENCE_DETECTOR_OPTIONS.inputSize;
+    canvas.height = PRESENCE_DETECTOR_OPTIONS.inputSize;
+    presenceWarmupPromise = faceapi.detectSingleFace(
+      canvas,
+      new faceapi.TinyFaceDetectorOptions(PRESENCE_DETECTOR_OPTIONS)
+    ).then(() => undefined).catch(error => {
+      presenceWarmupPromise = null;
+      throw error;
+    });
+  }
+  return presenceWarmupPromise;
 }
 
 async function ensureAgeModels() {
