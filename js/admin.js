@@ -28,18 +28,31 @@ function syncWorkerStationSelection() {
    $("#worker-start").disabled = false;
    $("#start-section-experience").disabled = false;
  }
- updateWorkerPreview(select.value);
+ renderWorkerStationCards(enabled);
+ updateWorkerSelectionVisual(select.value);
 }
-function updateWorkerPreview(stationId) {
+function renderWorkerStationCards(stations) {
+ const host = $("#worker-station-cards");
+ if (!host) return;
+ host.innerHTML = stations.map((station, index) => `
+  <button class="worker-station-card" type="button" data-worker-station="${escapeHTML(station.id)}" aria-pressed="false">
+   <img src="${escapeHTML(station.posterByAge.all)}" alt="" loading="${index < 3 ? "eager" : "lazy"}">
+   <span class="worker-station-shade"></span>
+   <span class="worker-station-index">0${index + 1} <span>·</span> BEAUTY TECH</span>
+   <span class="worker-station-content">
+    <span class="worker-station-title">${escapeHTML(station.name)}</span>
+    <span class="worker-station-copy">${escapeHTML(station.headline || station.copy)}</span>
+   </span>
+   <span class="worker-station-arrow" aria-hidden="true">↗</span>
+  </button>`).join("");
+}
+function updateWorkerSelectionVisual(stationId) {
  const station = appState.stations.get(stationId);
- const poster = $("#worker-preview-poster");
- const title = $("#worker-preview-title");
- const copy = $("#worker-preview-copy");
- if (!station || !poster || !title || !copy) return;
- poster.src = station.posterByAge?.all || "";
- poster.alt = `Póster del vídeo de ${station.name}`;
- title.textContent = station.name;
- copy.textContent = station.ageContent?.all?.headline || station.copy || "";
+ if (!station) return;
+ $("#worker-selected-station").textContent = station.name;
+ $("#worker-station-cards").querySelectorAll("[data-worker-station]").forEach(card => {
+  card.setAttribute("aria-pressed", String(card.dataset.workerStation === stationId));
+ });
 }
 function startSelectedExperience(stationId) {
  const station = appState.stations.get(stationId);
@@ -312,7 +325,14 @@ export function initializeAdmin() {
    const cameraSelect = $("#camera-station");
    cameraSelect.value = event.target.value;
    cameraSelect.dispatchEvent(new Event("change"));
-   updateWorkerPreview(event.target.value);
+   updateWorkerSelectionVisual(event.target.value);
+ });
+ $("#worker-station-cards")?.addEventListener("click", event => {
+   const card = event.target.closest("[data-worker-station]");
+   if (!card) return;
+   const select = $("#worker-station");
+   select.value = card.dataset.workerStation;
+   select.dispatchEvent(new Event("change", { bubbles: true }));
  });
  $("#worker-start")?.addEventListener("click", () => startSelectedExperience($("#worker-station").value));
  $("#start-section-experience")?.addEventListener("click", () => startSelectedExperience($("#camera-station")?.value || ""));

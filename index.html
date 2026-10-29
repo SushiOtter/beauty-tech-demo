@@ -16,6 +16,7 @@
   <link rel="stylesheet" href="css/admin.css">
   <link rel="stylesheet" href="css/experience.css?v=41">
   <link rel="stylesheet" href="css/kiosk.css?v=3">
+  <link rel="stylesheet" href="css/redesign.css?v=3">
 </head>
 <body>
   <div class="ambient ambient-one" aria-hidden="true"></div>
@@ -38,30 +39,24 @@
     </header>
 
     <section id="worker-view" class="worker-view" aria-labelledby="worker-title">
-      <div class="worker-layout">
-        <div class="worker-main">
-          <p class="eyebrow">BEAUTY TECH <span>·</span> PREPARACIÓN DE TABLET</p>
-          <h1 id="worker-title">Una experiencia<br><em>hecha para ti.</em></h1>
-          <p class="worker-copy">Selecciona la sección de esta tablet e inicia la experiencia. La cámara solo detectará presencia para mostrar los vídeos de esa sección.</p>
-          <div class="worker-controls">
-            <label for="worker-station">SECCIÓN ASIGNADA
-              <select id="worker-station" class="field-select"></select>
-            </label>
-            <button class="button button-primary" id="worker-start" type="button">Iniciar experiencia <span aria-hidden="true">→</span></button>
-          </div>
-          <p class="worker-note"><span aria-hidden="true">◉</span> La cámara se activa al iniciar · Detección local · Sin imágenes guardadas</p>
+      <div class="station-picker-heading">
+        <div>
+          <p class="eyebrow">BEAUTY TECH <span>·</span> DESCUBRE TU PRÓXIMO RITUAL</p>
+          <h1 id="worker-title">¿Qué te gustaría<br><em>descubrir hoy?</em></h1>
+          <p class="worker-copy">Elige una sección y empieza. Hay un mundo de belleza esperándote.</p>
         </div>
-        <aside class="worker-preview" aria-live="polite">
-          <img id="worker-preview-poster" src="assets/videos/age-recommendations/apparatology-all.jpg" alt="">
-          <div class="worker-preview-shade"></div>
-          <div class="worker-preview-caption">
-            <span class="worker-preview-kicker">VÍDEO DE BIENVENIDA</span>
-            <strong id="worker-preview-title">Aparatología</strong>
-            <span id="worker-preview-copy">Tecnología para tu piel</span>
-          </div>
-          <span class="worker-preview-play" aria-hidden="true">▶</span>
-        </aside>
+        <span class="station-picker-count"><strong>01</strong><span>ELIGE<br>UNA SECCIÓN</span></span>
       </div>
+      <div id="worker-station-cards" class="worker-station-cards" role="group" aria-label="Elige una sección"></div>
+      <div class="worker-action-bar">
+        <div class="worker-action-note">
+          <span class="worker-action-icon" aria-hidden="true">✦</span>
+          <span><strong id="worker-selected-station">Aparatología</strong><small>La cámara solo detecta presencia; no guarda imágenes.</small></span>
+        </div>
+        <button class="button button-primary" id="worker-start" type="button">Empezar experiencia <span aria-hidden="true">→</span></button>
+      </div>
+      <label class="visually-hidden" for="worker-station">Sección seleccionada</label>
+      <select id="worker-station" class="visually-hidden" aria-label="Sección seleccionada"></select>
     </section>
 
     <section id="camera-consent-view" class="worker-view camera-flow-view" aria-labelledby="camera-consent-title" hidden>
@@ -278,6 +273,6 @@
     <div id="station-player-content" class="station-player-content"></div>
   </div>
   <script src="js/bootstrap.js"></script>
-  <script type="module" src="js/main.js?v=48"></script>
+  <script type="module" src="js/main.js?v=50"></script>
 </body>
 </html>

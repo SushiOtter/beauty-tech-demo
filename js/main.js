@@ -2,7 +2,7 @@ import { appState, stationStates } from "./state.js";
 import { loadConfiguration, renderConfigs } from "./configuration.js?v=37";
 import { renderDevices } from "./panels.js?v=33";
 import { initializeEventEngine } from "./events.js?v=33";
-import { initializeAdmin } from "./admin.js?v=42";
+import { initializeAdmin } from "./admin.js?v=43";
 import { detectionCapabilities } from "./detection.js";
 import { $ } from "./utils.js";
 import { initializeMediaControls } from "./media.js?v=38";
