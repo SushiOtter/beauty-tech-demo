@@ -1,6 +1,6 @@
 import { appState } from "./state.js";
 import { $ } from "./utils.js";
-import { startCamera, stopCamera } from "./camera.js?v=35";
+import { startCamera, stopCamera } from "./camera.js?v=36";
 import { listVideos } from "./supabase.js";
 
 let activeStationId = "";
@@ -10,9 +10,25 @@ let activeVideoIndex = -1;
 let presenceActive = false;
 let failedVideoIndexes = new Set();
 
+function playAttractVideo() {
+  const video = $("#kiosk-attract-video");
+  if (!playlist.length) return;
+  video.src = playlist[0].url;
+  video.load();
+  video.play().catch(error => {
+    console.warn("No se pudo reproducir el vídeo de espera de la tablet:", error);
+  });
+}
+
+function stopAttractVideo() {
+  const video = $("#kiosk-attract-video");
+  video.pause();
+}
+
 function showVideo(index) {
   const video = $("#kiosk-video");
   if (!presenceActive || !playlist.length) return;
+  stopAttractVideo();
   const videoIndex = index % playlist.length;
   activeVideoIndex = videoIndex;
   const media = playlist[videoIndex];
@@ -52,6 +68,7 @@ function handleVideoFailure(index, error) {
   video.currentTime = 0;
   $("#kiosk-player").hidden = true;
   $("#kiosk-attract").hidden = false;
+  playAttractVideo();
   $("#kiosk-camera-status").textContent = "No se pudieron reproducir los vídeos. La cámara sigue detectando presencia.";
 }
 
@@ -114,6 +131,7 @@ async function startKiosk(stationId) {
   document.body.classList.add("tablet-mode");
   const hasVideos = await loadPlaylist(station);
   if (!appState.kioskMode || activeStationId !== stationId) return;
+  playAttractVideo();
   if (!hasVideos) {
     $("#kiosk-camera-status").textContent = "La tablet está en espera. Añade vídeos a esta sección desde Administración.";
     return;
@@ -134,6 +152,7 @@ function stopKiosk() {
   video.pause();
   video.removeAttribute("src");
   video.load();
+  stopAttractVideo();
   $("#tablet-kiosk").hidden = true;
   $("#public-view").hidden = true;
   $("#worker-view").hidden = false;
@@ -167,6 +186,7 @@ function endPresence() {
   video.currentTime = 0;
   $("#kiosk-player").hidden = true;
   $("#kiosk-attract").hidden = false;
+  playAttractVideo();
   playlistCursor = 0;
   activeVideoIndex = -1;
   failedVideoIndexes = new Set();

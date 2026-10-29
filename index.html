@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="css/responsive.css?v=33">
   <link rel="stylesheet" href="css/admin.css">
   <link rel="stylesheet" href="css/experience.css?v=41">
-  <link rel="stylesheet" href="css/kiosk.css?v=2">
+  <link rel="stylesheet" href="css/kiosk.css?v=3">
 </head>
 <body>
   <div class="ambient ambient-one" aria-hidden="true"></div>
@@ -72,7 +72,7 @@
         <strong>Procesamiento local en este dispositivo</strong>
         <ul>
           <li>La cámara se activa al iniciar la experiencia; el detector funciona aquí y no graba ni guarda imágenes.</li>
-          <li>Al alejarte, el vídeo se detiene; la cámara sigue activa mientras el trabajador mantenga la experiencia iniciada.</li>
+          <li>Al alejarte, el vídeo continúa. Si pasan 15 segundos sin detectar presencia, vuelve al vídeo de espera.</li>
           <li>Si no aceptas, puedes continuar sin cámara con contenido para todas las edades.</li>
         </ul>
       </div>
@@ -129,7 +129,7 @@
         <div>
           <p class="eyebrow">MODO PRESENTACIÓN</p>
           <h2 id="quick-start-title">Activa una experiencia automática</h2>
-          <p>Elige la sección y pulsa iniciar. La tablet reproduce sus vídeos al detectar presencia y vuelve a la espera cuando la persona se aleja.</p>
+          <p>Elige la sección y pulsa iniciar. La tablet reproduce sus vídeos al detectar presencia y vuelve al vídeo de espera tras 15 segundos sin detectar a nadie.</p>
         </div>
         <div class="quick-start-actions">
           <label class="media-field" for="camera-station">Sección
@@ -222,6 +222,7 @@
         </header>
         <div class="kiosk-stage">
           <div id="kiosk-attract" class="kiosk-attract">
+            <video id="kiosk-attract-video" muted playsinline loop aria-hidden="true"></video>
             <p class="eyebrow">DESCUBRE ESTA SECCIÓN</p>
             <h1 id="kiosk-category"></h1>
             <p id="kiosk-copy"></p>
@@ -277,6 +278,6 @@
     <div id="station-player-content" class="station-player-content"></div>
   </div>
   <script src="js/bootstrap.js"></script>
-  <script type="module" src="js/main.js?v=46"></script>
+  <script type="module" src="js/main.js?v=47"></script>
 </body>
 </html>

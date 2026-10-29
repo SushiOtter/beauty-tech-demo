@@ -67,7 +67,10 @@
 .kiosk-live { display: flex; align-items: center; gap: 9px; color: rgba(255,250,243,.7); font-size: 10px; letter-spacing: .16em; }
 .kiosk-live i { width: 7px; height: 7px; border-radius: 50%; background: #8eb6a1; box-shadow: 0 0 12px #8eb6a1; }
 .kiosk-stage { display: grid; flex: 1; min-height: 0; place-items: center; padding: 28px 0; }
-.kiosk-attract { max-width: 780px; text-align: center; animation: fade-up .45s ease both; }
+.kiosk-attract { position: relative; display: grid; width: min(100%, 1120px); height: min(68vh, 720px); place-content: center; overflow: hidden; border-radius: 18px; text-align: center; animation: fade-up .45s ease both; }
+.kiosk-attract::after { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(15,13,12,.76), rgba(15,13,12,.4), rgba(15,13,12,.76)); content: ""; }
+.kiosk-attract video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; background: #090807; }
+.kiosk-attract > :not(video) { position: relative; z-index: 1; }
 .kiosk-attract .eyebrow { color: var(--kiosk-gold); letter-spacing: .2em; }
 .kiosk-attract h1 { margin: 12px 0; font-family: var(--font-display, Georgia, serif); font-size: clamp(42px, 8vw, 88px); font-weight: 400; }
 .kiosk-attract > p:not(.eyebrow) { max-width: 600px; margin: 0 auto; color: rgba(255,250,243,.72); font-size: clamp(16px, 2vw, 22px); line-height: 1.5; }
@@ -88,5 +91,6 @@
   .server-video button { grid-column: 2; grid-row: 1 / span 2; }
   .kiosk-footer { align-items: flex-start; flex-direction: column; }
   .kiosk-privacy { text-align: left; }
+  .kiosk-attract { height: min(60vh, 520px); padding: 18px; }
   .kiosk-player { height: min(60vh, 520px); }
 }

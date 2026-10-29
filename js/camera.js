@@ -14,6 +14,8 @@ const MIN_FACE_CONFIDENCE = 0.22;
 const MIN_FACE_AREA = 0.0008;
 const INFERENCE_INTERVAL_MS = 120;
 const KIOSK_PRESENCE_DWELL_MS = 0;
+const KIOSK_PRESENCE_LOST_MS = 15_000;
+const PRESENCE_LOST_MS = 850;
 const ZONE_COUNT = 5;
 const ZONE_STORAGE_KEY = "beauty-tech-camera-zones-v1";
 const CONFIDENCE_STORAGE_KEY = "beauty-tech-camera-confidence-v1";
@@ -233,8 +235,11 @@ function scanFrame(now, token) {
       if (!detection || detection.score < activationConfidence) {
         drawOverlay(null);
         if (!missedDetectionSince) missedDetectionSince = performance.now();
-        if (performance.now() - missedDetectionSince > 850) resetPresence();
-        status(detection ? `Confianza inferior al mínimo (${Math.round(activationConfidence * 100)}%).` : personPresent ? "Detección intermitente; mantén la posición…" : "Buscando rostro… mejora la luz y acércate un poco.", true);
+        const lostPresenceDelay = appState.kioskMode ? KIOSK_PRESENCE_LOST_MS : PRESENCE_LOST_MS;
+        if (performance.now() - missedDetectionSince > lostPresenceDelay) resetPresence();
+        status(detection ? `Confianza inferior al mínimo (${Math.round(activationConfidence * 100)}%).` : personPresent
+          ? appState.kioskMode ? "Cliente detectado; manteniendo la experiencia durante 15 segundos sin presencia…" : "Detección intermitente; mantén la posición…"
+          : "Buscando rostro… mejora la luz y acércate un poco.", true);
         return;
       }
       missedDetectionSince = 0; drawOverlay(detection);
