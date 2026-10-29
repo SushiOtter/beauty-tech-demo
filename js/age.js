@@ -3,6 +3,7 @@ import { getAgeRange } from "./products.js?v=33";
 const FACE_API_URL = new URL("../vendor/face-api/face-api.js", import.meta.url).href;
 const MODEL_URL = new URL("../models/face-api/", import.meta.url).href;
 const DETECTOR_OPTIONS = { inputSize: 224, scoreThreshold: 0.25 };
+const PRESENCE_DETECTOR_OPTIONS = { inputSize: 160, scoreThreshold: 0.25 };
 
 let libraryPromise = null;
 let detectorPromise = null;
@@ -88,7 +89,7 @@ export async function loadFaceDetector() {
 
 export async function detectFace(video) {
   const faceapi = await loadFaceDetector();
-  const result = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions(DETECTOR_OPTIONS));
+  const result = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions(PRESENCE_DETECTOR_OPTIONS));
   if (!result) return null;
   const detection = result.detection || result;
   const { x, y, width, height } = detection.box;

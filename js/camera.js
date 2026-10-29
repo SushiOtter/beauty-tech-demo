@@ -1,7 +1,7 @@
 import { appState } from "./state.js";
 import { emitEvent } from "./events.js";
 import { $, escapeHTML } from "./utils.js";
-import { detectFace, loadFaceDetector } from "./age.js";
+import { detectFace, loadFaceDetector } from "./age.js?v=34";
 
 let stream = null, video = null, canvas = null, context = null;
 let faceModelReady = false, faceModelPromise = null;
@@ -12,7 +12,8 @@ let missedDetectionSince = 0;
 let activeTargetStationId = "";
 const MIN_FACE_CONFIDENCE = 0.22;
 const MIN_FACE_AREA = 0.0008;
-const INFERENCE_INTERVAL_MS = 220;
+const INFERENCE_INTERVAL_MS = 120;
+const KIOSK_PRESENCE_DWELL_MS = 500;
 const ZONE_COUNT = 5;
 const ZONE_STORAGE_KEY = "beauty-tech-camera-zones-v1";
 const CONFIDENCE_STORAGE_KEY = "beauty-tech-camera-confidence-v1";
@@ -139,6 +140,12 @@ export async function startCamera() {
   }
   setControls(true); status("Solicitando permiso de cámara…");
   metric("#metric-model", "Cargando"); metric("#metric-confidence", "—"); metric("#metric-latency", "—"); metric("#metric-zone", "—"); metric("#metric-last-detection", "—");
+  const modelTask = ensureModels(message => {
+    if (token === startToken && stream) status(message, true);
+  }).then(
+    () => ({ error: null }),
+    error => ({ error })
+  );
   try {
     const acquiredStream = await navigator.mediaDevices.getUserMedia({
       video: { facingMode: "user", width: { ideal: 640 }, height: { ideal: 480 }, frameRate: { ideal: 15, max: 20 } }, audio: false
@@ -148,8 +155,8 @@ export async function startCamera() {
     personStartedAt = 0; personPresent = false; triggeredThisPresence = false; latestZone = -1;
     lastInferenceAt = 0; inferenceBusy = false; inferenceFailed = false; missedDetectionSince = 0;
     status("Cámara activa. Cargando el detector facial local…", true);
-    try { await ensureModels(message => { if (token === startToken && stream) status(message, true); }); }
-    catch (error) {
+    const { error } = await modelTask;
+    if (error) {
       if (token !== startToken || !stream) return false;
       console.error("Carga de IA fallida:", error);
       stopCamera(false);
@@ -244,7 +251,10 @@ function scanFrame(now, token) {
       metric("#metric-zone", `Z${zone + 1}${station ? ` · ${station.name}` : " · vacía"}`);
       status(`${detection.kind === "face" ? "Rostro" : "Persona"} detectado · ${Math.round(detection.score * 100)}% · ${selectedStationId ? "Sección" : `Zona ${zone + 1}`}${station ? ` → ${station.name}` : " sin asignar"} · ${(dwellMs / 1000).toFixed(1)} s`, true);
       if (station?.state === "cooldown") triggeredThisPresence = false;
-      if (station && station.state !== "cooldown" && dwellMs >= Number(station.dwellMs ?? appState.config.settings.attentionThresholdMs) && !triggeredThisPresence) {
+      const dwellThresholdMs = appState.kioskMode
+        ? KIOSK_PRESENCE_DWELL_MS
+        : Number(station?.dwellMs ?? appState.config.settings.attentionThresholdMs);
+      if (station && station.state !== "cooldown" && dwellMs >= dwellThresholdMs && !triggeredThisPresence) {
         void onSustainedPresence({ confidence: detection.score, areaRatio, dwellMs, zone, station, kind: detection.kind, token });
       }
     }).catch(error => {

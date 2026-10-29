@@ -1,6 +1,6 @@
 import { appState } from "./state.js";
 import { $ } from "./utils.js";
-import { startCamera, stopCamera } from "./camera.js?v=33";
+import { startCamera, stopCamera } from "./camera.js?v=34";
 import { listVideos } from "./supabase.js";
 
 let activeStationId = "";
@@ -94,12 +94,13 @@ async function startKiosk(stationId) {
   $("#kiosk-manual-start").hidden = true;
   document.body.classList.add("tablet-mode");
   const hasVideos = await loadPlaylist(station);
+  if (!appState.kioskMode || activeStationId !== stationId) return;
   if (!hasVideos) {
     $("#kiosk-camera-status").textContent = "La tablet está en espera. Añade vídeos a esta sección desde Administración.";
     return;
   }
-  const startCameraTask = startCamera();
-  const cameraReady = await startCameraTask;
+  const cameraReady = await startCamera();
+  if (!appState.kioskMode || activeStationId !== stationId) return;
   if (!cameraReady) {
     $("#kiosk-manual-start").hidden = false;
     $("#kiosk-manual-start").focus();
@@ -128,16 +129,12 @@ function stopKiosk() {
   $("#worker-start")?.focus();
 }
 
-async function beginPresence() {
+function beginPresence() {
   if (!appState.kioskMode || !activeStationId || presenceActive) return;
   presenceActive = true;
-  $("#kiosk-camera-status").textContent = "Presencia detectada. Cargando vídeos de la sección…";
-  const station = appState.stations.get(activeStationId);
-  if (!station || !await loadPlaylist(station) || !presenceActive) {
-    presenceActive = false;
-    $("#kiosk-camera-status").textContent = "No hay vídeos disponibles. Añádelos desde la administración del PC.";
-    return;
-  }
+  playlistCursor = 0;
+  activeVideoIndex = -1;
+  failedVideoIndexes = new Set();
   $("#kiosk-camera-status").textContent = "Presencia detectada. Reproduciendo contenido de la sección.";
   showVideo(playlistCursor);
 }
