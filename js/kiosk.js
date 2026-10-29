@@ -13,19 +13,19 @@ let failedVideoIndexes = new Set();
 function showVideo(index) {
   const video = $("#kiosk-video");
   if (!presenceActive || !playlist.length) return;
-  activeVideoIndex = index % playlist.length;
-  const media = playlist[activeVideoIndex];
+  const videoIndex = index % playlist.length;
+  activeVideoIndex = videoIndex;
+  const media = playlist[videoIndex];
   playlistCursor = (activeVideoIndex + 1) % playlist.length;
   video.src = media.url;
-  video.loop = playlist.length === 1;
+  video.loop = false;
   video.setAttribute("aria-label", `Vídeo de ${media.name}`);
   $("#kiosk-player").hidden = false;
   $("#kiosk-attract").hidden = true;
   video.play().then(() => {
-    if (presenceActive) $("#kiosk-camera-status").textContent = "Vídeo de la sección en reproducción.";
+    if (presenceActive && activeVideoIndex === videoIndex) $("#kiosk-camera-status").textContent = "Vídeo de la sección en reproducción.";
   }, error => {
-    console.error("No se pudo reproducir el vídeo de la tablet:", error);
-    $("#kiosk-camera-status").textContent = "No se pudo reproducir este vídeo. Comprueba el formato del archivo.";
+    handleVideoFailure(videoIndex, error);
   });
 }
 
@@ -35,6 +35,24 @@ function nextPlayableIndex(startIndex) {
     if (!failedVideoIndexes.has(index)) return index;
   }
   return -1;
+}
+
+function handleVideoFailure(index, error) {
+  if (!presenceActive || index !== activeVideoIndex || failedVideoIndexes.has(index)) return;
+  console.error("No se pudo reproducir el vídeo de la tablet:", error);
+  failedVideoIndexes.add(index);
+  const nextIndex = nextPlayableIndex(playlistCursor);
+  if (nextIndex >= 0) {
+    showVideo(nextIndex);
+    return;
+  }
+  presenceActive = false;
+  const video = $("#kiosk-video");
+  video.pause();
+  video.currentTime = 0;
+  $("#kiosk-player").hidden = true;
+  $("#kiosk-attract").hidden = false;
+  $("#kiosk-camera-status").textContent = "No se pudieron reproducir los vídeos. La cámara sigue detectando presencia.";
 }
 
 async function loadPlaylist(station) {
@@ -58,6 +76,7 @@ async function loadPlaylist(station) {
     $("#kiosk-library-status").textContent = "No se pudo conectar con la biblioteca de Supabase.";
     $("#kiosk-presence-prompt").textContent = "Comprueba la conexión con la biblioteca online";
     playlist = [];
+    failedVideoIndexes = new Set();
     return false;
   }
 }
@@ -126,6 +145,7 @@ function stopKiosk() {
   appState.presentationStationId = "";
   activeStationId = "";
   playlist = [];
+  failedVideoIndexes = new Set();
   $("#worker-start")?.focus();
 }
 
@@ -147,6 +167,9 @@ function endPresence() {
   video.currentTime = 0;
   $("#kiosk-player").hidden = true;
   $("#kiosk-attract").hidden = false;
+  playlistCursor = 0;
+  activeVideoIndex = -1;
+  failedVideoIndexes = new Set();
   $("#kiosk-camera-status").textContent = "Esperando a la siguiente persona. El detector local sigue activo.";
 }
 
@@ -158,23 +181,20 @@ export function initializeKiosk() {
   window.addEventListener("beautytech:presence-detected", beginPresence);
   window.addEventListener("beautytech:presence-lost", endPresence);
   $("#kiosk-video").addEventListener("ended", () => {
-    if (!presenceActive || playlist.length <= 1) return;
+    if (!presenceActive || activeVideoIndex < 0) return;
     const nextIndex = nextPlayableIndex(playlistCursor);
     if (nextIndex >= 0) showVideo(nextIndex);
   });
   $("#kiosk-video").addEventListener("error", () => {
     if (!presenceActive || !playlist.length) return;
-    failedVideoIndexes.add(activeVideoIndex);
-    const nextIndex = nextPlayableIndex(playlistCursor);
-    if (nextIndex >= 0) {
-      showVideo(nextIndex);
-      return;
-    }
-    $("#kiosk-camera-status").textContent = "No se pudo reproducir el vídeo. Comprueba que sea MP4, WebM u Ogg.";
+    handleVideoFailure(activeVideoIndex, new Error("Error de carga o reproducción del vídeo."));
   });
   $("#kiosk-manual-start").addEventListener("click", () => {
-    if (!playlist.length) return;
+    if (!playlist.length || presenceActive) return;
     presenceActive = true;
+    playlistCursor = 0;
+    activeVideoIndex = -1;
+    failedVideoIndexes = new Set();
     $("#kiosk-camera-status").textContent = "Modo sin cámara: contenido iniciado manualmente.";
     showVideo(playlistCursor);
   });

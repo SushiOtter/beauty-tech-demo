@@ -27,14 +27,14 @@ La URL y la clave anon son públicas por diseño: la seguridad depende de las po
 
 - Incluye cinco secciones: aparatología, maquillaje, tratamientos capilares, novedades y color de pelo.
 - La encargada puede subir y eliminar vídeos después de autenticarse con su cuenta de Supabase. Las tablets solo leen los vídeos de la sección que el trabajador haya seleccionado.
-- Si una sección no tiene vídeos, la tablet espera y no activa la cámara. Cuando se aleja la persona, el vídeo se detiene y el detector local vuelve a esperar.
+- Si una sección no tiene vídeos, la tablet espera y no activa la cámara. Al detectar un rostro, reproduce los vídeos de la sección mientras haya presencia; al alejarse la persona, detiene el vídeo y espera al siguiente cliente. La detección permanece activa durante toda la experiencia.
 - La aplicación limita los archivos a 50 MB para que la prueba sea compatible con los límites habituales del plan gratuito. El plan de Supabase también puede imponer límites de tamaño, almacenamiento y transferencia.
 
 ## Cámara y privacidad
 
 - El detector incluido solo localiza un rostro para determinar presencia. No estima edad, no identifica a la persona y no analiza rasgos. Los fotogramas se procesan en el navegador de la tablet y no se almacenan ni se envían al servidor.
 - La cámara solicita permiso al iniciar la experiencia. GitHub Pages ya sirve HTTPS, requisito habitual para usar la cámara desde una tablet.
-- Para reducir la espera de la primera detección, el modelo local se carga y prepara al abrir la aplicación; esto no activa la cámara. En modo tablet, el vídeo comienza tras 250 ms de presencia detectada.
+- Para reducir la espera de la primera detección, el modelo local se carga y prepara al abrir la aplicación; esto no activa la cámara. En modo tablet, el vídeo comienza con la primera detección facial válida.
 - Antes de usarlo con clientes reales, revisa permisos de cámara, señalización visible, privacidad, seguridad y obligaciones legales con la responsable correspondiente.
 
 ## Contenido de demostración y licencias

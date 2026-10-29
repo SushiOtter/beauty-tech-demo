@@ -6,7 +6,7 @@ import { initializeAdmin } from "./admin.js?v=42";
 import { detectionCapabilities } from "./detection.js";
 import { $ } from "./utils.js";
 import { initializeMediaControls } from "./media.js?v=37";
-import { initializeKiosk } from "./kiosk.js?v=4";
+import { initializeKiosk } from "./kiosk.js?v=6";
 import { preloadCameraDetector } from "./camera.js?v=35";
 
 async function boot() {
